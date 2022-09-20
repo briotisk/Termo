@@ -5,6 +5,7 @@
 ;main:
 ;
 ; Seta parametros
+; Call DesenhaTelaInicial
 ; Switch(modo){
 ;
 ;  Case 1:
@@ -24,6 +25,15 @@
 ;
 ;/main
 ;================================================
+;DesenhaTelaInicial:
+;	
+; [Imprime as opções no formato de menu:
+;  	1 - Termo
+;  	2 - Dueto
+;   3 - Quarteto]
+;
+;/DesenhaTelaInicial
+;================================================
 ;Termo:
 ;
 ; Call SortearPalavra
@@ -35,6 +45,31 @@
 ; /Loop
 ;
 ;/Termo
+;================================================
+;DesenhaTelaTermo:
+;
+; Call ApagaTelaInicial
+; [Escreve a palavra "Termo" no topo da tela com 'e' em amarelo e 'o' em verde]
+; Call DesenhaTracos
+;
+;/DesenhaTelaTermo
+;================================================
+;ApagaTelaInicial:
+;
+; [coloca caracteres em branco sobre o que foi escrito na tela inicial]
+;
+;/ApagaTelaInicial
+;================================================
+;DesenhaTracos:
+;
+; Loop:
+;
+;   outchar('_', pos)
+;   pos++
+;
+; /Loop
+;
+;/DesenhaTracos
 ;================================================
 ;Dueto:
 ;
@@ -48,6 +83,14 @@
 ;
 ;/Dueto
 ;================================================
+;DesenhaTelaDueto:
+;
+; Call ApagaTelaInicial
+; [Escreve a palavra "Dueto" no topo da tela com 'u' em amarelo e 'o' em verde]
+; Call DesenhaTracos(x2)
+;
+;/DesenhaTelaDueto
+;================================================
 ;Quarteto:
 ;
 ; Call SortearPalavra(x4)
@@ -59,6 +102,14 @@
 ; /Loop
 ;
 ;/Quarteto
+;================================================
+;DesenhaTelaQuarteto:
+;
+; Call ApagaTelaInicial
+; [Escreve a palavra "Quarteto" no topo da tela com 'u' em amarelo e 'e' em verde]
+; Call DesenhaTracos(x4)
+;
+;/DesenhaTelaQuarteto
 ;================================================
 ;InputPalavra:
 ;
@@ -73,3 +124,12 @@
 ; [Le uma letra do teclado]
 ;
 ;/InputLetra
+;================================================
+;SortearPalavra:
+; 
+;/SortearPalavra
+;================================================
+;Compara:
+; 
+;/Compara
+;================================================
