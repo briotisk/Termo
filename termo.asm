@@ -39,9 +39,11 @@
 ; Call SortearPalavra
 ; Call DesenhaTelaTermo
 ; Loop(x6):
+;
 ;   Call InputPalavra
 ;   Call Compara
-;   Call ImprimeTentativaTermo
+;   Call ImprimePalavra
+;
 ; /Loop
 ;
 ;/Termo
@@ -50,35 +52,20 @@
 ;
 ; Call ApagaTelaInicial
 ; [Escreve a palavra "Termo" no topo da tela com 'e' em amarelo e 'o' em verde]
-; Call DesenhaTracos
+; Call ImprimePalavra("_____")
 ;
 ;/DesenhaTelaTermo
-;================================================
-;ApagaTelaInicial:
-;
-; [coloca caracteres em branco sobre o que foi escrito na tela inicial]
-;
-;/ApagaTelaInicial
-;================================================
-;DesenhaTracos:
-;
-; Loop:
-;
-;   outchar('_', pos)
-;   pos++
-;
-; /Loop
-;
-;/DesenhaTracos
 ;================================================
 ;Dueto:
 ;
 ; Call SortearPalavra(x2)
 ; Call DesenhaTelaDueto
 ; Loop(x7):
+;
 ;   Call InputPalavra
 ;   Call Compara(x2)
-;   Call ImprimeTentativaDueto
+;   Call ImprimePalavra(x2)
+;
 ; /Loop
 ;
 ;/Dueto
@@ -87,7 +74,7 @@
 ;
 ; Call ApagaTelaInicial
 ; [Escreve a palavra "Dueto" no topo da tela com 'u' em amarelo e 'o' em verde]
-; Call DesenhaTracos(x2)
+; Call ImprimePalavra("_____")(x2)
 ;
 ;/DesenhaTelaDueto
 ;================================================
@@ -98,7 +85,7 @@
 ; Loop(x9):
 ;   Call InputPalavra
 ;   Call Compara(x4)
-;   Call ImprimeTentativaQuarteto
+;   Call ImprimePalavra(x4)
 ; /Loop
 ;
 ;/Quarteto
@@ -107,14 +94,22 @@
 ;
 ; Call ApagaTelaInicial
 ; [Escreve a palavra "Quarteto" no topo da tela com 'u' em amarelo e 'e' em verde]
-; Call DesenhaTracos(x4)
+; Call ImprimePalavra("_____")(x4)
 ;
 ;/DesenhaTelaQuarteto
+;================================================
+;ApagaTelaInicial:
+;
+; [coloca caracteres em branco sobre o que foi escrito na tela inicial]
+;
+;/ApagaTelaInicial
 ;================================================
 ;InputPalavra:
 ;
 ; Loop(x5):
+;
 ;   Call InputLetra
+;
 ; /Loop
 ;
 ;/InputPalavra
@@ -132,4 +127,16 @@
 ;Compara:
 ; 
 ;/Compara
+;================================================
+;ImprimePalavra
+; 
+; Loop(x5)
+;
+;   outchar(Palavra[i], pos)
+;   pos++
+;   i++   
+;
+; /Loop
+;
+;/ImprimePalavra
 ;================================================
