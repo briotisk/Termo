@@ -6,6 +6,7 @@
 ;
 ; Seta parametros
 ; Call DesenhaTelaInicial
+; Call InputLetra
 ; Switch(modo){
 ;
 ;  Case 1:
@@ -51,8 +52,8 @@
 ;DesenhaTelaTermo:
 ;
 ; Call ApagaTelaInicial
-; [Escreve a palavra "Termo" no topo da tela com 'e' em amarelo e 'o' em verde]
-; Call ImprimePalavra("_____")
+; ImprimePalavra("TERMO")
+; Call ImprimePalavra("_____")(x1)(x9)
 ;
 ;/DesenhaTelaTermo
 ;================================================
@@ -61,7 +62,7 @@
 ; Call SortearPalavra(x2)
 ; Call DesenhaTelaDueto
 ; Loop(x7):
-;
+;	
 ;   Call InputPalavra
 ;   Call Compara(x2)
 ;   Call ImprimePalavra(x2)
@@ -73,8 +74,8 @@
 ;DesenhaTelaDueto:
 ;
 ; Call ApagaTelaInicial
-; [Escreve a palavra "Dueto" no topo da tela com 'u' em amarelo e 'o' em verde]
-; Call ImprimePalavra("_____")(x2)
+; ImprimePalavra("DUETO")
+; Call ImprimePalavra("_____")(x2)(x7)
 ;
 ;/DesenhaTelaDueto
 ;================================================
@@ -83,9 +84,11 @@
 ; Call SortearPalavra(x4)
 ; Call DesenhaTelaQuarteto
 ; Loop(x9):
+;
 ;   Call InputPalavra
 ;   Call Compara(x4)
 ;   Call ImprimePalavra(x4)
+;
 ; /Loop
 ;
 ;/Quarteto
@@ -93,8 +96,8 @@
 ;DesenhaTelaQuarteto:
 ;
 ; Call ApagaTelaInicial
-; [Escreve a palavra "Quarteto" no topo da tela com 'u' em amarelo e 'e' em verde]
-; Call ImprimePalavra("_____")(x4)
+; ImprimePalavra("QUARTETO")
+; Call ImprimePalavra("_____")(x4)(x9)
 ;
 ;/DesenhaTelaQuarteto
 ;================================================
@@ -144,6 +147,15 @@
 
 jmp main
 
+;---------Armazenamento das palavras usadas no jogo---------
+
+
+;---------Declaração das variáveis globais---------
+Letra: var #1
+Modo: var #1
+Palavra: var #5
+
+;---------Mensagens usadas no program seguidas de ses respectivos comprimentos---------
 Msgn1: string "Escolha um modo para jogar"
 Msgn1_len: var #1
 Msgn2: string "1 - Termo"
@@ -152,19 +164,54 @@ Msgn3: string "2 - Dueto"
 Msgn3_len: var #1
 Msgn4: string "3 - Quarteto"
 Msgn4_len: var #1
-
+Msgn5: string "                          "
+Msgn5_len: var #1
+Msgn6: string "T E R M O"
+Msgn6_len: var #1
+Msgn7: string "D U E T O"
+Msgn7_len: var #1
+Msgn8: string "Q U A R T E T O"
+Msgn8_len: var #1
+Msgn9: string "_____"
+Msgn9_len: var #1
 ;----------Inicio Programa Principal----------
 main:
 	
-	loadn r0, #26 			;carrega o tamanho da mensagem 1 (26 chars) para r0
+	loadn r0, #26 			;carrega o tamanho das mensagens 1 e 5 (26 chars) para r0
 	store Msgn1_len, r0 	;salva o conteúdo de r0 na variável 
-	loadn r0, #9 			;carrega o tamanho das mensagens 2 e 3 (9 chars) para r0
+	store Msgn5_len, r0 	;salva o conteúdo de r0 na variável 
+	loadn r0, #9 			;carrega o tamanho das mensagens 2, 3, 6, 7 e 9 (9 chars) para r0
 	store Msgn2_len, r0		;salva o conteúdo de r0 na variável
 	store Msgn3_len, r0		;salva o conteúdo de r0 na variável
+	store Msgn6_len, r0		;salva o conteúdo de r0 na variável
+	store Msgn7_len, r0		;salva o conteúdo de r0 na variável
+	store Msgn9_len, r0		;salva o conteúdo de r0 na variável
 	loadn r0, #12 			;carrega o tamanho da mensagem 4 (12 chars) para r0
 	store Msgn4_len, r0		;salva o conteúdo de r0 na variável
+	loadn r0, #5 			;carrega o tamanho das mensagens 6, 7 e 9 (5 chars) para r0
+	loadn r0, #15 			;carrega o tamanho da mensagem 8 (8 chars) para r0
+	store Msgn8_len, r0		;salva o conteúdo de r0 na variável
 
 	Call DesenhaTelaInicial
+	Call InputLetra
+
+	;Switch(Letra)
+	load r0, Letra 		;carrega para r0 o conteúdo da variável "Letra"
+
+	;Case('1')
+	loadn r1, #'1'			;carrega para r1 o código ASCII do caracter '1'
+	cmp r1, r0				;compara o conteúdo dos registradores
+	ceq Termo				;chama a subrotina "Termo" caso "Letra" corresponda a '1'
+
+	;Case('2')
+	inc r1					;carrega para r1 o código ASCII do caracter '2'
+	cmp r1, r0				;compara o conteúdo dos registradores
+	ceq Dueto				;chama a subrotina "Dueto" caso "Letra" corresponda a '2'
+
+	;Case('3')
+	inc r1					;carrega para r1 o código ASCII do caracter '3'
+	cmp r1, r0				;compara o conteúdo dos registradores
+	ceq Quarteto			;chama a subrotina "Quarteto" caso "Letra" corresponda a '3'
 
 	halt
 
@@ -175,39 +222,34 @@ main:
 ; 			Desenha Tela Inicial 			|
 ;--------------------------------------------
 ; Descrição: Desenha o menu inicial do jogo |
-;-------------------------------------------
-											
+;-------------------------------------------											
 DesenhaTelaInicial:
 
-	;DAR PUSH NOS REGISTRADORES
 	push fr
 	push r0
 	push r1
 	push r2
 
 	loadn r0, #Msgn1 ;carrega para r0 o endereço no qual começa a primeira mensagem
-	loadn r1, #6 ; carrega a posição na qual deve se iniciar a impressão
+	loadn r1, #46 ; carrega a posição na qual deve se iniciar a impressão
 	load r2, Msgn1_len ; carrega para r1 o tamanho da primeira mensagem
 	Call ImprimePalavra ;imprime Mensagem 1
 
 	loadn r0, #Msgn2 ;carrega para r0 o endereço no qual começa a primeira mensagem
-	loadn r1, #135 ; carrega a posição na qual deve se iniciar a impressão
+	loadn r1, #175 ; carrega a posição na qual deve se iniciar a impressão
 	load r2, Msgn2_len ; carrega para r1 o tamanho da primeira mensagem
 	Call ImprimePalavra ;imprime Mensagem 2
 
 	loadn r0, #Msgn3 ;carrega para r0 o endereço no qual começa a primeira mensagem
-	loadn r1, #215 ; carrega a posição na qual deve se iniciar a impressão
+	loadn r1, #255 ; carrega a posição na qual deve se iniciar a impressão
 	load r2, Msgn3_len ; carrega para r1 o tamanho da primeira mensagem
 	Call ImprimePalavra ;imprime Mensagem 3
 
 	loadn r0, #Msgn4 ;carrega para r0 o endereço no qual começa a primeira mensagem
-	loadn r1, #295 ; carrega a posição na qual deve se iniciar a impressão
+	loadn r1, #335 ; carrega a posição na qual deve se iniciar a impressão
 	load r2, Msgn4_len ; carrega para r1 o tamanho da primeira mensagem
 	Call ImprimePalavra ;imprime Mensagem 4
 	
-	breakp
-
-	;DAR POP NOS REGISTRADORES
 	pop r2
 	pop r1
 	pop r0
@@ -216,6 +258,43 @@ DesenhaTelaInicial:
 	rts
 ;--------------------------------------------
 
+;-----------------------------------------
+; 			 Apaga Tela Inicial 		  |
+;-----------------------------------------
+; Descrição: Apaga o menu inicial do jogo |
+;-----------------------------------------	
+ApagaTelaInicial:
+	
+
+	push fr
+	push r0
+	push r1
+	push r2
+
+	loadn r0, #Msgn5 ;carrega para r0 o endereço da mensagem "     " que será usada para sobrescrever e apagar as mensagens escritas
+	load r2, Msgn5_len ; carrega para r1 o tamanho da mensagem
+	loadn r1, #46 ; carrega a posição onde se inicai a primeira mensagen a ser apagada
+	Call ImprimePalavra ;apaga Mensagem 1
+	loadn r1, #175 ; carrega a posição onde se inicai a segunda mensagen a ser apagada
+	Call ImprimePalavra ;apaga Mensagem 2
+	loadn r1, #255 ; carrega a posição onde se inicai a terceira mensagen a ser apagada
+	Call ImprimePalavra ;apaga Mensagem 3
+	loadn r1, #335 ; carrega a posição onde se inicai a quarta mensagen a ser apagada
+	Call ImprimePalavra ;apaga Mensagem 4
+	
+	pop r2
+	pop r1
+	pop r0
+	pop fr
+
+	rts
+;-----------------------------------------
+
+;------------------------------------------
+; 			   Imprime Palavra 		      |
+;------------------------------------------
+; Descrição: Imprime uma palavra desejada |
+;------------------------------------------
 ImprimePalavra:
 	
 	push fr
@@ -227,7 +306,7 @@ ImprimePalavra:
 
 	loadn r3, #0 ;criterio de parada
 
-	Loop_ImprimePalavra:
+	ImprimePalavra_Loop:
 
 		loadi r4, r0
 		outchar r4, r1
@@ -235,8 +314,7 @@ ImprimePalavra:
 		inc r1
 		dec r2
 		cmp r2, r3
-		jnz Loop_ImprimePalavra
-
+		jnz ImprimePalavra_Loop
 
 	pop r4
 	pop r3
@@ -246,4 +324,82 @@ ImprimePalavra:
 	pop fr
 
 	rts
+;------------------------------------------
+
+;----------------------------------------------
+; 				   Input Letra				   |
+;----------------------------------------------
+; Descrição: Lê um caractere válido do teclado |
+;----------------------------------------------
+InputLetra:	
+
+	push fr	
+	push r0
+	push r1
+	push r2
+
+	loadn r1, #255	; Se nao digitar nada vem 255
+	loadn r2, #0	; Logo que programa a FPGA o inchar vem 0
+
+   InputLetra_Loop:
+		inchar r0			; Le o teclado, se nada for digitado = 255
+		cmp r0, r1			;compara r0 com 255
+		jeq InputLetra_Loop	; Fica lendo ate' que digite uma tecla valida
+		cmp r0, r2			;compara r0 com 0
+		jeq InputLetra_Loop	; Le novamente pois Logo que programa a FPGA o inchar vem 0
+
+	store Letra, r0			; Salva a tecla na variavel global "Letra"
+	
+   InputLetra_Loop2:	
+		inchar r0			; Le o teclado, se nada for digitado = 255
+		cmp r0, r1			;compara r0 com 255
+		jne InputLetra_Loop2	; Fica lendo ate' que digite uma tecla valida
+	
+	pop r2
+	pop r1
+	pop r0
+	pop fr
+
+	rts
+;----------------------------------------------
+
+
+Termo:
+	
+	Call DesenhaTelaTermo
+	breakp;implementar
+
+;---------------------------------------------------
+; 			 	 Desenha Tela Termo 		  		|
+;---------------------------------------------------
+; Descrição: Desenha a tela inicial do modo "Termo" |
+;---------------------------------------------------
+DesenhaTelaTermo:
+
+	push fr
+	push r0
+	push r1
+	push r2
+	
+	Call ApagaTelaInicial
+	loadn r0, #Msgn6 ;carrega para r0 o endereço no qual começa a sexta mensagem ("TERMO")
+	loadn r1, #54 ; carrega a posição na qual deve se iniciar a impressão
+	load r2, Msgn6_len ; carrega para r1 o tamanho da sexta mensagem ("TERMO")
+	Call ImprimePalavra ;imprime a mensagem 
+
+	pop r2
+	pop r1
+	pop r0
+	pop fr
+
+	rts
+;---------------------------------------------------
+
+Dueto:
+
+	breakp;implementar
+
+Quarteto:
+	
+	breakp;implementar
 
