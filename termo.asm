@@ -172,7 +172,7 @@ Msgn7: string "D U E T O"
 Msgn7_len: var #1
 Msgn8: string "Q U A R T E T O"
 Msgn8_len: var #1
-Msgn9: string "_____"
+Msgn9: string "_ _ _ _ _"
 Msgn9_len: var #1
 ;----------Inicio Programa Principal----------
 main:
@@ -188,7 +188,6 @@ main:
 	store Msgn9_len, r0		;salva o conteúdo de r0 na variável
 	loadn r0, #12 			;carrega o tamanho da mensagem 4 (12 chars) para r0
 	store Msgn4_len, r0		;salva o conteúdo de r0 na variável
-	loadn r0, #5 			;carrega o tamanho das mensagens 6, 7 e 9 (5 chars) para r0
 	loadn r0, #15 			;carrega o tamanho da mensagem 8 (8 chars) para r0
 	store Msgn8_len, r0		;salva o conteúdo de r0 na variável
 
@@ -302,21 +301,16 @@ ImprimePalavra:
 	push r1
 	push r2
 	push r3
-	push r4
-
-	loadn r3, #0 ;criterio de parada
 
 	ImprimePalavra_Loop:
 
-		loadi r4, r0
-		outchar r4, r1
-		inc r0
-		inc r1
-		dec r2
-		cmp r2, r3
-		jnz ImprimePalavra_Loop
+		loadi r3, r0	;carrega para r3 o caractere presente no endereço salvo em r0
+		outchar r3, r1  ;imprime o caractere em r3 na posição r1
+		inc r0          ;avança para a próxima letra
+		inc r1			;avança para a próxima posição
+		dec r2			;decrementa r2 indicando que mais um caractere foi impresso na tela
+		jnz ImprimePalavra_Loop ;executa mais uma vez o trecho de código se r2 != 0
 
-	pop r4
 	pop r3
 	pop r2
 	pop r1
@@ -380,6 +374,8 @@ DesenhaTelaTermo:
 	push r0
 	push r1
 	push r2
+	push r3
+	push r4
 	
 	Call ApagaTelaInicial
 	loadn r0, #Msgn6 ;carrega para r0 o endereço no qual começa a sexta mensagem ("TERMO")
@@ -387,6 +383,22 @@ DesenhaTelaTermo:
 	load r2, Msgn6_len ; carrega para r1 o tamanho da sexta mensagem ("TERMO")
 	Call ImprimePalavra ;imprime a mensagem 
 
+	loadn r3, #80 ;fator para pular 2 linhas
+	loadn r4, #6  ;número de tentativas
+	loadn r1, #374 ; carrega a posição na qual deve se iniciar a impressão
+	loadn r0, #Msgn9 ;carrega para r0 o endereço no qual começa a sexta mensagem ("____")
+	load r2, Msgn9_len ; carrega para r1 o tamanho da sexta mensagem ("_____")
+	
+	DesenhaTelaTermo_Loop:
+
+		add r1, r1, r3 ; seta a posição para imprimir a nova mensagem duas linhas abaixo
+		Call ImprimePalavra ;imprime a mensagem 
+		dec r4 ;decrementa r4 indicando que mais uma impressão foi realizada
+		jnz DesenhaTelaTermo_Loop
+	
+
+	pop r4
+	pop r3
 	pop r2
 	pop r1
 	pop r0
@@ -396,10 +408,51 @@ DesenhaTelaTermo:
 ;---------------------------------------------------
 
 Dueto:
-
+	
+	Call DesenhaTelaDueto
 	breakp;implementar
 
 Quarteto:
 	
+	Call DesenhaTelaQuarteto
 	breakp;implementar
 
+DesenhaTelaDueto:
+
+	push fr
+	push r0
+	push r1
+	push r2
+	
+	Call ApagaTelaInicial
+	loadn r0, #Msgn7 ;carrega para r0 o endereço no qual começa a sexta mensagem ("TERMO")
+	loadn r1, #54 ; carrega a posição na qual deve se iniciar a impressão
+	load r2, Msgn7_len ; carrega para r1 o tamanho da sexta mensagem ("TERMO")
+	Call ImprimePalavra ;imprime a mensagem 
+
+	pop r2
+	pop r1
+	pop r0
+	pop fr
+
+	rts
+
+DesenhaTelaQuarteto:
+
+	push fr
+	push r0
+	push r1
+	push r2
+	
+	Call ApagaTelaInicial
+	loadn r0, #Msgn8 ;carrega para r0 o endereço no qual começa a sexta mensagem ("TERMO")
+	loadn r1, #51 ; carrega a posição na qual deve se iniciar a impressão
+	load r2, Msgn8_len ; carrega para r1 o tamanho da sexta mensagem ("TERMO")
+	Call ImprimePalavra ;imprime a mensagem 
+
+	pop r2
+	pop r1
+	pop r0
+	pop fr
+
+	rts
