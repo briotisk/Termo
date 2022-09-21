@@ -53,7 +53,7 @@
 ;
 ; Call ApagaTelaInicial
 ; ImprimePalavra("TERMO")
-; Call ImprimePalavra("_____")(x1)(x9)
+; Call ImprimePalavra("_____")(x1)(x6)
 ;
 ;/DesenhaTelaTermo
 ;================================================
