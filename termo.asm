@@ -366,34 +366,40 @@ InputPalavra:
 	push r2
 	push r3
 	push r4
+	push r5
 
-	loadn r0, #Palavra ;ponteiro para o vetor "Palavra"
-	loadn r2, #5       ;todas as palavras válidas possuem 5 letras
-	loadn r3, #32  	   ;código do espaço usado para apagar(backspace não tava dando certo = (  )
-	loadn r4, #0
+	loadn r1, #Palavra ;ponteiro para o vetor "Palavra"
+	loadn r3, #5       ;todas as palavras válidas possuem 5 letras
+	loadn r4, #32  	   ;código do espaço usado para apagar(backspace não tava dando certo = (  )
+	loadn r5, #0
 
 	InputPalavra_Loop:
 
 		Call InputLetra 	;chamada da subrotina que lê uma letra
-		load r1, Letra 		;carrega a letra lida no registrador
-		cmp r1, r3			;verifica se o usuário deu um backspace
+		load r2, Letra 		;carrega a letra lida no registrador
+		cmp r2, r4			;verifica se o usuário deu um backspace
 		jeq InputPalavra_apagaLetra		;chamada caso o usuário digite um backspace
 		jne InputPalavra_insereLetra 	;chamada caso contrário	
 
 	InputPalavra_apagaLetra:
-		dec r0					;volta o ponteiro uma posição para sobrescrever a letra a ser apagada
-		inc r2					;aumenta uma iteração
-		cmp r2, r4
+		dec r1					;volta o ponteiro uma posição para sobrescrever a letra a ser apagada
+		inc r3					;aumenta uma iteração
+		dec r0					;volta a posição de impressão 
+		loadn r2, #'_'			;salva o caractere '_' em r2 para realizar a impressão
+		outchar r2, r0			;imprime o caractere de r2 na posição de r0
+		cmp r3, r5
 		jne InputPalavra_Loop	;reexecuta o loop caso r2 não tenha chegado a zero
 
 	InputPalavra_insereLetra:
-		storei r0, r1			;salva a letra na posição correspondente da variável "Palavra"
-		dec r2					;diminui uma iteração
-		inc r0					;avança o ponteiro
-		cmp r2, r4
+		storei r1, r2			;salva a letra na posição correspondente da variável "Palavra"
+		dec r3					;diminui uma iteração
+		inc r1					;avança o ponteiro
+		outchar r2, r0			;imprime o caractere de r2 na posição de r0
+		inc r0
+		cmp r3, r5
 		jne InputPalavra_Loop	;reexecuta o loop caso r2 não tenha chegado a zero
 
-
+	pop r5
 	pop r4
 	pop r3
 	pop r2
@@ -417,7 +423,18 @@ Termo:
 	push r4
 	
 	Call DesenhaTelaTermo
-	Call InputPalavra
+
+	loadn r0, #376 ;carrega a posição na qual deve se iniciar a impressão
+	loadn r1, #80  ;fator para pular duas linhas
+	loadn r2, #6   ;numero de tentativas
+
+	Termo_Loop:
+	
+		add r0, r0, r1	  ;pula duas linhas para escrever a próxima palavra
+		Call InputPalavra ;lê a palavra
+		;Call Compara;falta implementar
+		dec r2;
+		jnz Termo_Loop
 
 	loadn r1, #376 ;carrega a posição na qual deve se iniciar a impressão
 	loadn r0, #Palavra ;carrega para r0 o endereço no qual começa o vetor "Palavra"
