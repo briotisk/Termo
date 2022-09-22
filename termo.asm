@@ -508,6 +508,15 @@ ImprimeLetraQuarteto:
 	push r1
 	push r2
 
+	loadn r1, #9 ;espaço entre as palavras impressas somado ao tamanho das mensagens
+
+	outchar r2, r0 ;imprime o caractere de r2 na posição de r0
+	add r0, r0, r1 ;seta a posição para imprimir a nova mensagem com 10 pixels de distancia da primeira
+	outchar r2, r0 ;imprime o caractere de r2 na posição de r0
+	add r0, r0, r1 ;seta a posição para imprimir a nova mensagem com 10 pixels de distancia da primeira
+	outchar r2, r0 ;imprime o caractere de r2 na posição de r0
+	add r0, r0, r1 ;seta a posição para imprimir a nova mensagem com 10 pixels de distancia da primeira
+	outchar r2, r0 ;imprime o caractere de r2 na posição de r0
 
 	pop r2
 	pop r1
@@ -607,7 +616,7 @@ DesenhaTelaTermo:
 ;-----------------------------------------------
 Dueto:
 	
-		push fr
+	push fr
 	push r0
 	push r1
 	push r2
@@ -699,8 +708,35 @@ DesenhaTelaDueto:
 ;--------------------------------------------------
 Quarteto:
 	
+	push fr
+	push r0
+	push r1
+	push r2
+	push r3
+	push r4
+	
 	Call DesenhaTelaQuarteto
-	breakp;implementar
+
+	loadn r0, #363 ;carrega a posição na qual deve se iniciar a impressão
+	loadn r1, #80  ;fator para pular duas linhas
+	loadn r2, #9   ;numero de tentativas
+
+	Dueto_Loop:
+	
+		Call InputPalavra ;lê a palavra
+		add r0, r0, r1	  ;seta a posição para imprimir a nova mensagem duas linhas abaixo
+		;Call Compara;falta implementar
+		dec r2;
+		jnz Dueto_Loop
+
+	pop r4
+	pop r3
+	pop r2
+	pop r1
+	pop r0
+	pop fr
+
+	breakp
 	rts
 ;--------------------------------------------------
 
