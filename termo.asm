@@ -367,27 +367,33 @@ InputPalavra:
 	push r3
 	push r4
 	push r5
+	push r6
+
 
 	loadn r1, #Palavra ;ponteiro para o vetor "Palavra"
 	loadn r3, #5       ;todas as palavras válidas possuem 5 letras
 	loadn r4, #32  	   ;código do espaço usado para apagar(backspace não tava dando certo = (  )
-	loadn r5, #0
+	loadn r5, #0 	   ;carrega zero para comparar com o iterador
+	loadn r6, #5	   ;carrega cinco para comparar com o iterador
 
 	InputPalavra_Loop:
 
 		Call InputLetra 	;chamada da subrotina que lê uma letra
 		load r2, Letra 		;carrega a letra lida no registrador
-		cmp r2, r4			;verifica se o usuário deu um backspace
+		cmp r2, r4			;verifica se o usuário deu espaço
 		jeq InputPalavra_apagaLetra		;chamada caso o usuário digite um backspace
 		jne InputPalavra_insereLetra 	;chamada caso contrário	
 
 	InputPalavra_apagaLetra:
+
+		cmp r3, r6				;verifica se é a primeira interação
+		jeq InputPalavra_Loop	;se for, não faz nada
 		dec r1					;volta o ponteiro uma posição para sobrescrever a letra a ser apagada
 		inc r3					;aumenta uma iteração
 		dec r0					;volta a posição de impressão 
 		loadn r2, #'_'			;salva o caractere '_' em r2 para realizar a impressão
 		outchar r2, r0			;imprime o caractere de r2 na posição de r0
-		cmp r3, r5
+		cmp r3, r5				;verifica se o iterador já chegoua zero
 		jne InputPalavra_Loop	;reexecuta o loop caso r2 não tenha chegado a zero
 
 	InputPalavra_insereLetra:
@@ -395,10 +401,11 @@ InputPalavra:
 		dec r3					;diminui uma iteração
 		inc r1					;avança o ponteiro
 		outchar r2, r0			;imprime o caractere de r2 na posição de r0
-		inc r0
-		cmp r3, r5
+		inc r0					;avança a posição de impressão
+		cmp r3, r5				;verifica se o iterador já chegoua zero
 		jne InputPalavra_Loop	;reexecuta o loop caso r2 não tenha chegado a zero
 
+	pop r6
 	pop r5
 	pop r4
 	pop r3
