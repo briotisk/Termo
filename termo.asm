@@ -358,14 +358,79 @@ InputLetra:
 	rts
 ;----------------------------------------------
 
+InputPalavra:
+
+	push fr
+	push r0
+	push r1
+	push r2
+	push r3
+	push r4
+
+	loadn r0, #Palavra ;ponteiro para o vetor "Palavra"
+	loadn r2, #5       ;todas as palavras válidas possuem 5 letras
+	loadn r3, #32  	   ;código do espaço usado para apagar(backspace não tava dando certo = (  )
+	loadn r4, #0
+
+	InputPalavra_Loop:
+
+		Call InputLetra 	;chamada da subrotina que lê uma letra
+		load r1, Letra 		;carrega a letra lida no registrador
+		cmp r1, r3			;verifica se o usuário deu um backspace
+		jeq InputPalavra_apagaLetra		;chamada caso o usuário digite um backspace
+		jne InputPalavra_insereLetra 	;chamada caso contrário	
+
+	InputPalavra_apagaLetra:
+		dec r0					;volta o ponteiro uma posição para sobrescrever a letra a ser apagada
+		inc r2					;aumenta uma iteração
+		cmp r2, r4
+		jne InputPalavra_Loop	;reexecuta o loop caso r2 não tenha chegado a zero
+
+	InputPalavra_insereLetra:
+		storei r0, r1			;salva a letra na posição correspondente da variável "Palavra"
+		dec r2					;diminui uma iteração
+		inc r0					;avança o ponteiro
+		cmp r2, r4
+		jne InputPalavra_Loop	;reexecuta o loop caso r2 não tenha chegado a zero
+
+
+	pop r4
+	pop r3
+	pop r2
+	pop r1
+	pop r0
+	pop fr
+
+	rts
 ;-----------------------------------------------
 ; 			 	 	  Termo 		  			|
 ;-----------------------------------------------
 ; Descrição: implementa de fato o modo "Termo"  |
 ;-----------------------------------------------
 Termo:
+
+	push fr
+	push r0
+	push r1
+	push r2
+	push r3
+	push r4
 	
 	Call DesenhaTelaTermo
+	Call InputPalavra
+
+	loadn r1, #376 ;carrega a posição na qual deve se iniciar a impressão
+	loadn r0, #Palavra ;carrega para r0 o endereço no qual começa o vetor "Palavra"
+	loadn r2, #5 ;carrega para r2 o tamanho da palavra
+	Call ImprimePalavra ;imprime a mensagem 
+
+	pop r4
+	pop r3
+	pop r2
+	pop r1
+	pop r0
+	pop fr
+
 	breakp;implementar
 	rts
 ;-----------------------------------------------
@@ -383,6 +448,8 @@ DesenhaTelaTermo:
 	push r2
 	push r3
 	push r4
+
+	;Call sorteiaPalavra
 	
 	Call ApagaTelaInicial
 	loadn r0, #Msgn6 ;carrega para r0 o endereço no qual começa a sexta mensagem ("TERMO")
