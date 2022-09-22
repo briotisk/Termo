@@ -196,7 +196,8 @@ main:
 	Call InputLetra
 
 	;Switch(Letra)
-	load r0, Letra 		;carrega para r0 o conteúdo da variável "Letra"
+	load r0, Letra 		;carrega para r0 o conteúdo da variável "Letra", onde está o que foi lido no teclado
+	store Modo, r0		;carrega o valor de r0 para a variável "Modo" para podermos usar mais tarde
 
 	;Case('1')
 	loadn r1, #'1'			;carrega para r1 o código ASCII do caracter '1'
@@ -393,7 +394,7 @@ InputPalavra:
 		inc r3					;aumenta uma iteração
 		dec r0					;volta a posição de impressão 
 		loadn r2, #'_'			;salva o caractere '_' em r2 para realizar a impressão
-		outchar r2, r0			;imprime o caractere de r2 na posição de r0
+		Call ImprimeLetra 		;chama a função que faz a impressão apropriada da letra digitada
 		cmp r3, r5				;verifica se o iterador já chegoua zero
 		jne InputPalavra_Loop	;reexecuta o loop caso r2 não tenha chegado a zero
 		jeq InputPalavra_LoopEnter ;pula para o loop que espera pelo enter
@@ -403,7 +404,7 @@ InputPalavra:
 		storei r1, r2			;salva a letra na posição correspondente da variável "Palavra"
 		dec r3					;diminui uma iteração
 		inc r1					;avança o ponteiro
-		outchar r2, r0			;imprime o caractere de r2 na posição de r0
+		Call ImprimeLetra 		;chama a função que faz a impressão apropriada da letra digitada
 		inc r0					;avança a posição de impressão
 		cmp r3, r5				;verifica se o iterador já chegoua zero
 		jne InputPalavra_Loop	;reexecuta o loop caso r2 não tenha chegado a zero
@@ -423,6 +424,86 @@ InputPalavra:
 	pop r5
 	pop r4
 	pop r3
+	pop r2
+	pop r1
+	pop r0
+	pop fr
+
+	rts
+
+
+ImprimeLetra:
+	
+	push fr
+	push r0
+	push r1
+	push r2
+	push r3
+
+	;Switch(Modo)
+	load r1, Modo 		;carrega para r0 o conteúdo da variável "Modo"
+
+	;Case('1')
+	loadn r3, #'1'			;carrega para r3 o código ASCII do caracter '1'
+	cmp r3, r1				;compara o conteúdo dos registradores
+	ceq ImprimeLetraTermo	;chama a subrotina "ImprimeLetraTermo" caso "Modo" corresponda a '1'
+
+	;Case('2')
+	inc r3					;carrega para r3 o código ASCII do caracter '2'
+	cmp r3, r1				;compara o conteúdo dos registradores
+	ceq ImprimeLetraDueto				;chama a subrotina "ImprimeLetraDueto" caso "Modo" corresponda a '2'
+
+	;Case('3')
+	inc r3					;carrega para r3 o código ASCII do caracter '3'
+	cmp r3, r1				;compara o conteúdo dos registradores
+	ceq ImprimeLetraQuarteto			;chama a subrotina "ImprimeLetraQuarteto" caso "Modo" corresponda a '3'
+
+	pop r3
+	pop r2
+	pop r1
+	pop r0
+	pop fr
+	rts
+
+ImprimeLetraTermo:
+	
+	push fr
+	push r0
+	push r1
+	push r2
+
+	outchar r2, r0			;imprime o caractere de r2 na posição de r0
+
+	pop r2
+	pop r1
+	pop r0
+	pop fr
+
+	rts
+
+ImprimeLetraDueto:
+	
+	push fr
+	push r0
+	push r1
+	push r2
+
+
+	pop r2
+	pop r1
+	pop r0
+	pop fr
+
+	rts
+
+ImprimeLetraQuarteto:
+	
+	push fr
+	push r0
+	push r1
+	push r2
+
+
 	pop r2
 	pop r1
 	pop r0
