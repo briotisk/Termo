@@ -359,6 +359,11 @@ InputLetra:
 	rts
 ;----------------------------------------------
 
+;---------------------------------------------------
+; 				  	Input Palavra				    |
+;---------------------------------------------------
+; Descrição: Lê uma cadeia de caracteres do teclado |
+;---------------------------------------------------
 InputPalavra:
 
 	push fr
@@ -430,8 +435,14 @@ InputPalavra:
 	pop fr
 
 	rts
+;---------------------------------------------------
 
-
+;-----------------------------------------------
+; 				  Imprime Letra				    | 
+;-----------------------------------------------
+; Descrição: imprime uma letra lida do teclado  |
+;            de acordo com o modo de jogo 		|
+;-----------------------------------------------
 ImprimeLetra:
 	
 	push fr
@@ -464,7 +475,14 @@ ImprimeLetra:
 	pop r0
 	pop fr
 	rts
+;-----------------------------------------------
 
+;-----------------------------------------------
+; 			   Imprime Letra Termo			    | 
+;-----------------------------------------------
+; Descrição: imprime uma letra lida do teclado  |
+;            em uma única coluna 				|
+;-----------------------------------------------
 ImprimeLetraTermo:
 	
 	push fr
@@ -480,7 +498,14 @@ ImprimeLetraTermo:
 	pop fr
 
 	rts
+;-----------------------------------------------
 
+;-----------------------------------------------
+; 			   Imprime Letra Dueto			    | 
+;-----------------------------------------------
+; Descrição: imprime uma letra lida do teclado  |
+;            em duas colunas simultaneamente 	|
+;-----------------------------------------------
 ImprimeLetraDueto:
 	
 	push fr
@@ -500,7 +525,14 @@ ImprimeLetraDueto:
 	pop fr
 
 	rts
+;-----------------------------------------------
 
+;-----------------------------------------------
+; 			  Imprime Letra Quarteto			| 
+;-----------------------------------------------
+; Descrição: imprime uma letra lida do teclado  |
+;            em quatro colunas simultaneamente 	|
+;-----------------------------------------------
 ImprimeLetraQuarteto:
 	
 	push fr
@@ -524,6 +556,8 @@ ImprimeLetraQuarteto:
 	pop fr
 
 	rts
+;-----------------------------------------------
+
 ;-----------------------------------------------
 ; 			 	 	  Termo 		  			|
 ;-----------------------------------------------
