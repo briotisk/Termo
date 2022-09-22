@@ -368,13 +368,14 @@ InputPalavra:
 	push r4
 	push r5
 	push r6
-
+	push r7
 
 	loadn r1, #Palavra ;ponteiro para o vetor "Palavra"
 	loadn r3, #5       ;todas as palavras válidas possuem 5 letras
 	loadn r4, #32  	   ;código do espaço usado para apagar(backspace não tava dando certo = (  )
 	loadn r5, #0 	   ;carrega zero para comparar com o iterador
 	loadn r6, #5	   ;carrega cinco para comparar com o iterador
+	loadn r7, #13 	   ;código do enter 
 
 	InputPalavra_Loop:
 
@@ -395,8 +396,10 @@ InputPalavra:
 		outchar r2, r0			;imprime o caractere de r2 na posição de r0
 		cmp r3, r5				;verifica se o iterador já chegoua zero
 		jne InputPalavra_Loop	;reexecuta o loop caso r2 não tenha chegado a zero
+		jeq InputPalavra_LoopEnter ;pula para o loop que espera pelo enter
 
 	InputPalavra_insereLetra:
+
 		storei r1, r2			;salva a letra na posição correspondente da variável "Palavra"
 		dec r3					;diminui uma iteração
 		inc r1					;avança o ponteiro
@@ -404,7 +407,18 @@ InputPalavra:
 		inc r0					;avança a posição de impressão
 		cmp r3, r5				;verifica se o iterador já chegoua zero
 		jne InputPalavra_Loop	;reexecuta o loop caso r2 não tenha chegado a zero
+		jeq InputPalavra_LoopEnter ;pula para o loop que espera pelo enter
 
+	InputPalavra_LoopEnter:
+
+		Call InputLetra 	;chamada da subrotina que lê uma letra
+		load r2, Letra 		;carrega a letra lida no registrador
+		cmp r2, r4			;verifica se o usuário deu espaço
+		jeq InputPalavra_apagaLetra		;chamada caso o usuário digite um backspace
+		cmp r2, r7			;verifica se o usuário deu enter
+		jne InputPalavra_LoopEnter		;chamada caso o usuário não digite enter
+
+	pop r7
 	pop r6
 	pop r5
 	pop r4
@@ -442,11 +456,6 @@ Termo:
 		;Call Compara;falta implementar
 		dec r2;
 		jnz Termo_Loop
-
-	loadn r1, #376 ;carrega a posição na qual deve se iniciar a impressão
-	loadn r0, #Palavra ;carrega para r0 o endereço no qual começa o vetor "Palavra"
-	loadn r2, #5 ;carrega para r2 o tamanho da palavra
-	Call ImprimePalavra ;imprime a mensagem 
 
 	pop r4
 	pop r3
