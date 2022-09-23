@@ -148,12 +148,27 @@
 jmp main
 
 ;---------Armazenamento das palavras usadas no jogo---------
-
+Offset: string "carro"
+string "garfo"
+string "prato"
+string "queda"
+string "viola"
+string "mundo"
+string "porto"
+string "ferro"
+string "perto"
+string "vital"
+;[OBSERVAÇÃO: Ao acrescentar palavras, mudar o valor de r4 na subrotina "SortearPalavra"]
 
 ;---------Declaração das variáveis globais---------
 Letra: var #1
 Modo: var #1
 Palavra: var #5
+NumAleat: var #1
+Palavra1: var #1
+Palavra2: var #1
+Palavra3: var #1
+Palavra4: var #1
 
 ;---------Mensagens usadas no program seguidas de ses respectivos comprimentos---------
 Msgn1: string "Escolha um modo para jogar"
@@ -192,12 +207,11 @@ main:
 	loadn r0, #15 			;carrega o tamanho da mensagem 8 (15 chars) para r0
 	store Msgn8_len, r0		;salva o conteúdo de r0 na variável
 
-	Call DesenhaTelaInicial
-	Call InputLetra
+	Call DesenhaTelaInicial	;imprime as mensagens inicais na tela
+	Call InputModo		    ;recebe o modo de jogo e desencadeia a geração de um número pseudo aleatório
 
 	;Switch(Letra)
-	load r0, Letra 		;carrega para r0 o conteúdo da variável "Letra", onde está o que foi lido no teclado
-	store Modo, r0		;carrega o valor de r0 para a variável "Modo" para podermos usar mais tarde
+	load r0, Modo 			;carrega para r0 o conteúdo da variável "Modo", onde está o que foi lido no teclado
 
 	;Case('1')
 	loadn r1, #'1'			;carrega para r1 o código ASCII do caracter '1'
@@ -345,11 +359,6 @@ InputLetra:
 		jeq InputLetra_Loop	; Le novamente pois Logo que programa a FPGA o inchar vem 0
 
 	store Letra, r0			; Salva a tecla na variavel global "Letra"
-	
-   InputLetra_Loop2:	
-		inchar r0			; Le o teclado, se nada for digitado = 255
-		cmp r0, r1			;compara r0 com 255
-		jne InputLetra_Loop2	; Fica lendo ate' que digite uma tecla valida
 	
 	pop r2
 	pop r1
@@ -573,6 +582,7 @@ Termo:
 	push r4
 	
 	Call DesenhaTelaTermo
+	Call SortearPalavra
 
 	loadn r0, #376 ;carrega a posição na qual deve se iniciar a impressão
 	loadn r1, #80  ;fator para pular duas linhas
@@ -593,7 +603,6 @@ Termo:
 	pop r0
 	pop fr
 
-	breakp
 	rts
 ;-----------------------------------------------
 
@@ -610,8 +619,6 @@ DesenhaTelaTermo:
 	push r2
 	push r3
 	push r4
-
-	;Call sorteiaPalavra
 	
 	Call ApagaTelaInicial
 	loadn r0, #Msgn6 ;carrega para r0 o endereço no qual começa a sexta mensagem ("TERMO")
@@ -658,6 +665,7 @@ Dueto:
 	push r4
 	
 	Call DesenhaTelaDueto
+	Call SortearPalavra
 
 	loadn r0, #369 ;carrega a posição na qual deve se iniciar a impressão
 	loadn r1, #80  ;fator para pular duas linhas
@@ -750,6 +758,7 @@ Quarteto:
 	push r4
 	
 	Call DesenhaTelaQuarteto
+	Call SortearPalavra
 
 	loadn r0, #363 ;carrega a posição na qual deve se iniciar a impressão
 	loadn r1, #80  ;fator para pular duas linhas
@@ -831,3 +840,132 @@ DesenhaTelaQuarteto:
 
 	rts
 ;------------------------------------------------------
+
+;-------------------------------------------------------
+; 				   		Input Modo				   		|
+;-------------------------------------------------------
+; Descrição: Lê o modo e gera um número pseudoaleatório |
+;-------------------------------------------------------
+InputModo:	
+
+	push fr	
+	push r0
+	push r1
+	push r2
+	push r3
+	push r4
+
+	loadn r1, #255	; Se nao digitar nada vem 255
+	loadn r2, #0	; Logo que programa a FPGA o inchar vem 0
+	loadn r3, #65535  	;valor máximo que pode ser salvo sem buffer overflow
+
+   InputModo_Loop1:
+
+   		cmp r4, r3			;evita buffer overflow
+   		jeq InputModo_Loop2 ;pula para o loop que decrementa
+   		inc r4				;altera continuamente o valor do registrador para gerar um valor aleatório
+		inchar r0			; Le o teclado, se nada for digitado = 255
+		cmp r0, r1			;compara r0 com 255
+		jeq InputModo_Loop1	; Fica lendo ate' que digite uma tecla valida
+		cmp r0, r2			;compara r0 com 0
+		jeq InputModo_Loop1	; Le novamente pois Logo que programa a FPGA o inchar vem 0
+		jne InputModo_FIm	;sai da subrotina
+
+   InputModo_Loop2:
+
+   		cmp r4, r2			;evita buffer overflow
+   		jeq InputModo_Loop1 ;volta ao loop que incrementa
+   		dec r4				;altera continuamente o valor do registrador para gerar um valor aleatório
+		inchar r0			; Le o teclado, se nada for digitado = 255
+		cmp r0, r1			;compara r0 com 255
+		jeq InputModo_Loop2	; Fica lendo ate' que digite uma tecla valida
+		cmp r0, r2			;compara r0 com 0
+		jeq InputModo_Loop2	; Le novamente pois Logo que programa a FPGA o inchar vem 0
+		jne InputModo_FIm	;sai da subrotina
+
+	InputModo_FIm:
+
+		store Modo, r0			;salva a tecla na variavel global "Modo"
+		store NumAleat, r4		;salva o pseudo aleatório na variável
+
+	pop r4
+	pop r3
+	pop r2
+	pop r1
+	pop r0
+	pop fr
+
+	rts
+;----------------------------------------------
+
+;-----------------------------------------------------
+; 			 	  	Sortear Palavra   	          	  |
+;-----------------------------------------------------
+; Descrição: Sorteia uma ou mais palavra(s) de acordo |
+;			 com o modo e o número aleátório 		  |
+;-----------------------------------------------------
+SortearPalavra:
+
+	push fr
+	push r0
+	push r1
+	push r2
+	push r3
+	push r4
+	push r5
+	push r6
+
+	load r2, Modo 		;carrega para r2 o modo
+	load r3, NumAleat 	;carrega o número aleatório para r3
+	loadn r4, #10 	  	;carrega para r4 o número de palavras
+	loadn r5, #Offset	;carrega o endereço da primeira palavra para r5
+
+	mod r0, r3, r4	  	;armazena em r0 o resto da divisão do número aleatório pela quantidade de palavras
+	loadn r1, #6  	  	;carrega para r1 o tamanho padrão das palavras + '\0'
+	mul r0, r0, r1 		;calcula a posição onde se inicia a palavra e armazena o resultado em r0
+	add r0, r0, r5	  	;soma o endereço da primeira palavra com o resultado do módulo do número do número aleatório multiplicado pelo tamanho das palavras para selecionar uma palavra
+	store Palavra1, r0	;salva a posição inicial da palavra selecionada na variável "Palavra1"
+	loadn r1, #'1'		;carrega o código ascii do caractere '1' para r1
+	cmp r1, r2			;verifica se o modo de jogo é 1, nesse caso apenas uma palavra é necessária
+	jeq SortearPalavra_FIm ;sai da subrotina em caso afirmativo
+
+	load r1, Palavra1	;carrega o código ascii da primeira letra da palavra para r1
+	mod r1, r1, r3		;guarda o resto da divisão do numero aleatório pelo valor de r1, que será usado para selecionar outra palavra
+	mod r0, r1, r4	  	;armazena em r0 o resto da divisão do número aleatório pela quantidade de palavras
+	loadn r1, #6  	  	;carrega para r1 o tamanho padrão das palavras + '\0'
+	mul r0, r0, r1 		;calcula a posição onde se inicia a palavra e armazena o resultado em r0
+	add r0, r0, r5	  	;soma o endereço da primeira palavra com o resultado do módulo do número do número aleatório multiplicado pelo tamanho das palavras para selecionar uma palavra
+	store Palavra2, r0	;salva a posição inicial da palavra selecionada na variável "Palavra2"
+	loadn r1, #'2'		;carrega o código ascii do caractere '1' para r1
+	cmp r1, r2			;verifica se o modo de jogo é 1, nesse caso apenas uma palavra é necessária
+	jeq SortearPalavra_FIm ;sai da subrotina em caso afirmativo
+
+	load r1, Palavra2	;carrega o código ascii da primeira letra da palavra para r1
+	mod r1, r1, r3		;guarda o resto da divisão do numero aleatório pelo valor de r1, que será usado para selecionar outra palavra
+	mod r0, r1, r4	  	;armazena em r0 o resto da divisão do número aleatório pela quantidade de palavras
+	loadn r1, #6  	  	;carrega para r1 o tamanho padrão das palavras + '\0'
+	mul r0, r0, r1 		;calcula a posição onde se inicia a palavra e armazena o resultado em r0
+	add r0, r0, r5	  	;soma o endereço da primeira palavra com o resultado do módulo do número do número aleatório multiplicado pelo tamanho das palavras para selecionar uma palavra
+	store Palavra3, r0	;salva a posição inicial da palavra selecionada na variável "Palavra3"
+
+	load r1, Palavra3	;carrega o código ascii da primeira letra da palavra para r1
+	mod r1, r1, r3		;guarda o resto da divisão do numero aleatório pelo valor de r1, que será usado para selecionar outra palavra
+	mod r0, r1, r4	  	;armazena em r0 o resto da divisão do número aleatório pela quantidade de palavras
+	loadn r1, #6  	  	;carrega para r1 o tamanho padrão das palavras + '\0'
+	mul r0, r0, r1 		;calcula a posição onde se inicia a palavra e armazena o resultado em r0
+	add r0, r0, r5	  	;soma o endereço da primeira palavra com o resultado do módulo do número do número aleatório multiplicado pelo tamanho das palavras para selecionar uma palavra
+	store Palavra4, r0	;salva a posição inicial da palavra selecionada na variável "Palavra4"
+
+	SortearPalavra_FIm:
+
+	pop r6
+	pop r5
+	pop r4
+	pop r3
+	pop r2
+	pop r1
+	pop r0
+	pop fr
+
+	rts
+;-----------------------------------------------------
