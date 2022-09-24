@@ -150,11 +150,11 @@ jmp main
 ;---------Armazenamento das palavras usadas no jogo---------
 Offset: string "carro"
 string "garfo"
-string "prato"
+string "pulga"
 string "queda"
 string "viola"
 string "mundo"
-string "porto"
+string "carta"
 string "ferro"
 string "perto"
 string "vital"
@@ -385,6 +385,7 @@ InputPalavra:
 	push r6
 	push r7
 
+	mov r0, r1		   ;copia o que estava em r1 para r0
 	loadn r1, #Palavra ;ponteiro para o vetor "Palavra"
 	loadn r3, #5       ;todas as palavras válidas possuem 5 letras
 	loadn r4, #32  	   ;código do espaço usado para apagar(backspace não tava dando certo = (  )
@@ -580,22 +581,31 @@ Termo:
 	push r2
 	push r3
 	push r4
+	push r5
+	push r6
+	push r7
 	
 	Call DesenhaTelaTermo
 	Call SortearPalavra
 
-	loadn r0, #376 ;carrega a posição na qual deve se iniciar a impressão
-	loadn r1, #80  ;fator para pular duas linhas
-	loadn r2, #6   ;numero de tentativas
+	loadn r0, #Palavra
+	loadn r1, #376 ;carrega a posição na qual deve se iniciar a impressão
+	loadn r2, #5   ;tamanho da palavra
+	loadn r6, #80  ;fator para pular duas linhas
+	loadn r7, #6   ;numero de tentativas
 
 	Termo_Loop:
 	
-		add r0, r0, r1	  ;pula duas linhas para escrever a próxima palavra
+		add r1, r1, r6	  ;pula duas linhas para escrever a próxima palavra
 		Call InputPalavra ;lê a palavra
-		;Call Compara;falta implementar
-		dec r2;
+		Call Compara
+		Call ImprimePalavra
+		dec r7;
 		jnz Termo_Loop
 
+	pop r7
+	pop r6
+	pop r5
 	pop r4
 	pop r3
 	pop r2
@@ -649,6 +659,92 @@ DesenhaTelaTermo:
 
 	rts
 ;---------------------------------------------------
+
+Compara:
+
+	push fr
+	push r0
+	push r1
+	push r2
+	push r3
+	push r4
+	push r5
+	push r6
+
+	loadn r5, #5  		;iterador da palavra digitada
+	loadn r6, #0  		;condição de saída dos loops
+	loadn r1, #Palavra 	;carrega para r0 o endereço contido da variável Palavra para que ele sirva de ponteiro para a palavra digitada pelo usuário
+	
+	Compara_LoopExterno:
+		
+		loadn r4, #5  		;iterador da palavra sorteada
+		loadi r3, r1		;salva em r1 o conteúdo do endereço de memória para o qual r1 aponta
+		load r0, Palavra1 	;carrega para r0 o endereço contido em "Palavra1" para que ele sirva de ponteiro para a primeira palavra
+
+		Compara_LoopInterno:
+
+			loadi r2, r0		;salva em r2 o conteúdo do endereço de memória para o qual r0 aponta
+			cmp r2, r3			;verifica se as letras são iguais
+			ceq SetaCorLetra	;altera a cor da letra
+			dec r4				;indica que uma iteração foi realizada
+			inc r0				;avança o ponteiro
+			cmp r4, r6			;verifica se o loop chegou ao fim
+			jne Compara_LoopInterno ;sai do loop quando toda a palavra for comparada
+
+		dec r5					;indica que uma letra foi comparada com a palavra toda
+		inc r1 					;avança o ponteiro
+		cmp r5, r6			;verifica se o loop chegou ao fim
+		jne Compara_LoopExterno ;sai do loop quando todas as palavras tiverem sido verificadas
+
+	pop r6
+	pop r5
+	pop r4
+	pop r3
+	pop r2
+	pop r1
+	pop r0
+	pop fr
+
+	rts
+
+SetaCorLetra:
+
+	push fr
+	push r0
+	push r1
+	push r2
+	push r3
+	push r4
+	push r5
+
+	cmp r4, r5
+	jeq SomaVerde
+	jne SomaAmarelo
+
+
+	SomaVerde:
+
+		loadn r0, #512 	;código da cor verde
+		jmp SetaCorLetra_Fim	;pula para o fim da subrotina
+
+	SomaAmarelo:
+
+		loadn r0, #2816 ;código da cor amarela
+
+	SetaCorLetra_Fim:
+
+		add r3, r3, r0	;muda a cor da letra para a cor desejada
+		storei r1, r3	;salva as alterações
+
+	pop r5
+	pop r4
+	pop r3
+	pop r2
+	pop r1
+	pop r0
+	pop fr
+
+	rts
 
 ;-----------------------------------------------
 ; 			 	 	  Dueto 		  			|
