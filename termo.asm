@@ -691,14 +691,8 @@ Compara:
 		jne Compara_Loop1		;verifica se o loop chegou ao fim
 
 
-	loadn r0, #PalavraCmp ;carrega para r0 o endereço no qual começa a sexta mensagem ("TERMO")
-	loadn r1, #134 ; carrega a posição na qual deve se iniciar a impressão
-	loadn r2, #5 ; carrega para r1 o tamanho da sexta mensagem ("TERMO")
-	Call ImprimePalavra ;imprime a mensagem 
-	breakp
-
-		loadn r5, #5  			;iterador da palavra digitada
-		loadn r1, #Palavra	    ;carrega para r0 o endereço contido da variável Palavra para que ele sirva de ponteiro para a palavra digitada pelo usuário
+	loadn r5, #5  			;iterador da palavra digitada
+	loadn r1, #Palavra	    ;carrega para r0 o endereço contido da variável Palavra para que ele sirva de ponteiro para a palavra digitada pelo usuário
 	
 
 	Compara_Loop2_Externo:
@@ -721,12 +715,6 @@ Compara:
 		inc r1 					;avança o ponteiro
 		cmp r5, r6			;verifica se o loop chegou ao fim
 		jne Compara_Loop2_Externo ;sai do loop quando todas as palavras tiverem sido verificadas
-
-	loadn r0, #PalavraCmp ;carrega para r0 o endereço no qual começa a sexta mensagem ("TERMO")
-	loadn r1, #134 ; carrega a posição na qual deve se iniciar a impressão
-	loadn r2, #5 ; carrega para r1 o tamanho da sexta mensagem ("TERMO")
-	Call ImprimePalavra ;imprime a mensagem 
-	breakp
 
 	pop r6
 	pop r5
