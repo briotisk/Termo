@@ -403,7 +403,7 @@ InputPalavra:
 		Call InputLetra 	;chamada da subrotina que lê uma letra
 		load r2, Letra 		;carrega a letra lida no registrador
 		cmp r2, r4			;verifica se o usuário deu espaço
-		jeq InputPalavra_apagaLetra		;chamada caso o usuário digite um backspace
+		jeq InputPalavra_apagaLetra		;chamada caso o usuário digite uma barra de espaço
 		jne InputPalavra_insereLetra 	;chamada caso contrário	
 
 	InputPalavra_apagaLetra:
@@ -435,7 +435,7 @@ InputPalavra:
 		Call InputLetra 	;chamada da subrotina que lê uma letra
 		load r2, Letra 		;carrega a letra lida no registrador
 		cmp r2, r4			;verifica se o usuário deu espaço
-		jeq InputPalavra_apagaLetra		;chamada caso o usuário digite um backspace
+		jeq InputPalavra_apagaLetra		;chamada caso o usuário digite uma barra de espaço
 		cmp r2, r7			;verifica se o usuário deu enter
 		jne InputPalavra_LoopEnter		;chamada caso o usuário não digite enter
 
