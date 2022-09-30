@@ -674,10 +674,11 @@ Compara:
 
 	loadn r5, #5  			;iterador
 	loadn r6, #0  			;condição de saída dos loops
-	loadn r1, #Palavra	    ;carrega para r0 o endereço contido da variável Palavra para que ele sirva de ponteiro para a palavra digitada pelo usuário
-	loadn r0, #PalavraCmp 	;carrega para r0 o endereço contido em "Palavra1" para que ele sirva de ponteiro para a primeira palavra
+	loadn r0, #PalavraCmp 	;carrega para r0 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
+	load r1, Palavra1		;ponteiro para a palavra a ser copiada
 	Call CopiaPalavra
-
+	loadn r1, #Palavra	    ;carrega para r0 o endereço contido da variável Palavra para que ele sirva de ponteiro para a palavra digitada pelo usuário
+	
 	Compara_Loop1:
 
 		loadi r3, r1			;salva em r1 o conteúdo do endereço de memória para o qual r1 aponta
@@ -736,17 +737,15 @@ CopiaPalavra:
 	push r2
 	push r3
 
-	loadn r0, #5  			;iterador da estrutura de repetição
-	load r1, Palavra1		;ponteiro para a palavra a ser copiada
-	loadn r2, #PalavraCmp	;ponteiro para a veriável onde vai ser copiada a palavra
+	loadn r2, #5  			;iterador da estrutura de repetição
 
 	CopiaPalavra_Loop:
 
 		loadi r3, r1			;carrega rum char para r3
-		storei r2, r3			;salva um char na memória
+		storei r0, r3			;salva um char na memória
 		inc r1					;avança o ponteiro
-		inc r2					;avança o ponteiro
-		dec r0					;decrementa o iterador
+		inc r0					;avança o ponteiro
+		dec r2					;decrementa o iterador
 		jnz CopiaPalavra_Loop	;sai do loop após as 5 iterações
 
 	pop r3
