@@ -163,54 +163,27 @@ string "vital"
 ;---------Declaração das variáveis globais---------
 Letra: var #1
 Modo: var #1
-Palavra: var #5
+Palavra: var #6
 NumAleat: var #1
 Palavra1: var #1
 Palavra2: var #1
 Palavra3: var #1
 Palavra4: var #1
-PalavraCmp: var #5
+PalavraCmp: var #6
 
 ;---------Mensagens usadas no program seguidas de ses respectivos comprimentos---------
 Msgn1: string "Escolha um modo para jogar"
-Msgn1_len: var #1
 Msgn2: string "1 - Termo"
-Msgn2_len: var #1
 Msgn3: string "2 - Dueto"
-Msgn3_len: var #1
 Msgn4: string "3 - Quarteto"
-Msgn4_len: var #1
 Msgn5: string "                          "
-Msgn5_len: var #1
 Msgn6: string "T E R M O"
-Msgn6_len: var #1
 Msgn7: string "D U E T O"
-Msgn7_len: var #1
 Msgn8: string "Q U A R T E T O"
-Msgn8_len: var #1
 Msgn9: string "_____"
-Msgn9_len: var #1
 Msgn10: string "Parabens!!"
-Msgn10_len: var #1
 ;----------Inicio Programa Principal----------
 main:
-	
-	loadn r0, #26 			;carrega o tamanho das mensagens 1 e 5 (26 chars) para r0
-	store Msgn1_len, r0 	;salva o conteúdo de r0 na variável 
-	store Msgn5_len, r0 	;salva o conteúdo de r0 na variável 
-	loadn r0, #9 			;carrega o tamanho das mensagens 2, 3, 6 e 7 (9 chars) para r0
-	store Msgn2_len, r0		;salva o conteúdo de r0 na variável
-	store Msgn3_len, r0		;salva o conteúdo de r0 na variável
-	store Msgn6_len, r0		;salva o conteúdo de r0 na variável
-	store Msgn7_len, r0		;salva o conteúdo de r0 na variável
-	loadn r0, #5 			;carrega o tamanho da mensagem 9 (5 chars) para r0
-	store Msgn9_len, r0		;salva o conteúdo de r0 na variável
-	loadn r0, #12 			;carrega o tamanho da mensagem 4 (12 chars) para r0
-	store Msgn4_len, r0		;salva o conteúdo de r0 na variável
-	loadn r0, #15 			;carrega o tamanho da mensagem 8 (15 chars) para r0
-	store Msgn8_len, r0		;salva o conteúdo de r0 na variável
-	loadn r0, #10 			;carrega o tamanho da mensagem 10 (10 chars) para r0
-	store Msgn10_len, r0	;salva o conteúdo de r0 na variável
 
 	Call DesenhaTelaInicial	;imprime as mensagens inicais na tela
 	Call InputModo		    ;recebe o modo de jogo e desencadeia a geração de um número pseudo aleatório
@@ -252,22 +225,18 @@ DesenhaTelaInicial:
 
 	loadn r0, #Msgn1 ;carrega para r0 o endereço no qual começa a primeira mensagem
 	loadn r1, #46 ; carrega a posição na qual deve se iniciar a impressão
-	load r2, Msgn1_len ; carrega para r1 o tamanho da primeira mensagem
 	Call ImprimePalavra ;imprime Mensagem 1
 
 	loadn r0, #Msgn2 ;carrega para r0 o endereço no qual começa a primeira mensagem
 	loadn r1, #175 ; carrega a posição na qual deve se iniciar a impressão
-	load r2, Msgn2_len ; carrega para r1 o tamanho da primeira mensagem
 	Call ImprimePalavra ;imprime Mensagem 2
 
 	loadn r0, #Msgn3 ;carrega para r0 o endereço no qual começa a primeira mensagem
 	loadn r1, #255 ; carrega a posição na qual deve se iniciar a impressão
-	load r2, Msgn3_len ; carrega para r1 o tamanho da primeira mensagem
 	Call ImprimePalavra ;imprime Mensagem 3
 
 	loadn r0, #Msgn4 ;carrega para r0 o endereço no qual começa a primeira mensagem
 	loadn r1, #335 ; carrega a posição na qual deve se iniciar a impressão
-	load r2, Msgn4_len ; carrega para r1 o tamanho da primeira mensagem
 	Call ImprimePalavra ;imprime Mensagem 4
 	
 	pop r2
@@ -289,10 +258,8 @@ ApagaTelaInicial:
 	push fr
 	push r0
 	push r1
-	push r2
 
 	loadn r0, #Msgn5 ;carrega para r0 o endereço da mensagem "     " que será usada para sobrescrever e apagar as mensagens escritas
-	load r2, Msgn5_len ; carrega para r1 o tamanho da mensagem
 	loadn r1, #46 ; carrega a posição onde se inica a primeira mensagen a ser apagada
 	Call ImprimePalavra ;apaga Mensagem 1
 	loadn r1, #175 ; carrega a posição onde se inica a segunda mensagen a ser apagada
@@ -302,7 +269,6 @@ ApagaTelaInicial:
 	loadn r1, #335 ; carrega a posição onde se inica a quarta mensagen a ser apagada
 	Call ImprimePalavra ;apaga Mensagem 4
 	
-	pop r2
 	pop r1
 	pop r0
 	pop fr
@@ -323,14 +289,19 @@ ImprimePalavra:
 	push r2
 	push r3
 
+	loadn r2, #'\0'
+
 	ImprimePalavra_Loop:
 
 		loadi r3, r0	;carrega para r3 o caractere presente no endereço salvo em r0
+		cmp r3, r2
+		jeq ImprimePalavra_Fim
 		outchar r3, r1  ;imprime o caractere em r3 na posição r1
 		inc r0          ;avança para a próxima letra
 		inc r1			;avança para a próxima posição
-		dec r2			;decrementa r2 indicando que mais um caractere foi impresso na tela
-		jnz ImprimePalavra_Loop ;executa mais uma vez o trecho de código se r2 != 0
+		jmp ImprimePalavra_Loop ;executa mais uma vez o trecho de código se r3 != '\0'
+
+	ImprimePalavra_Fim:
 
 	pop r3
 	pop r2
@@ -595,18 +566,18 @@ Termo:
 
 	loadn r0, #Palavra
 	loadn r1, #376 ;carrega a posição na qual deve se iniciar a impressão
-	loadn r2, #5   ;tamanho da palavra
+	;loadn r2, #5   ;tamanho da palavra
 	loadn r6, #80  ;fator para pular duas linhas
 	loadn r7, #6   ;numero de tentativas
 
 	Termo_Loop:
 	
-		add r1, r1, r6	  ;pula duas linhas para escrever a próxima palavra
-		Call InputPalavra ;lê a palavra
-		Call Compara
-		Call ImprimePalavra
-		dec r7;
-		jnz Termo_Loop
+		add r1, r1, r6	  	;pula duas linhas para escrever a próxima palavra
+		Call InputPalavra 	;lê a palavra
+		Call Compara 	   	;compara a palavra digitada com a sorteada e ajusta as cores
+		Call ImprimePalavra ;imprime a palavra com as colorida
+		dec r7;				;diminui uma iteração
+		jnz Termo_Loop 		;continua no loop até se encerrarem as tentativas
 
 	pop r7
 	pop r6
@@ -638,14 +609,12 @@ DesenhaTelaTermo:
 	Call ApagaTelaInicial
 	loadn r0, #Msgn6 ;carrega para r0 o endereço no qual começa a sexta mensagem ("TERMO")
 	loadn r1, #54 ; carrega a posição na qual deve se iniciar a impressão
-	load r2, Msgn6_len ; carrega para r1 o tamanho da sexta mensagem ("TERMO")
 	Call ImprimePalavra ;imprime a mensagem 
 
 	loadn r3, #80 ;fator para pular 2 linhas
 	loadn r4, #6  ;número de tentativas
 	loadn r1, #376 ; carrega a posição na qual deve se iniciar a impressão
 	loadn r0, #Msgn9 ;carrega para r0 o endereço no qual começa a sexta mensagem ("____")
-	load r2, Msgn9_len ; carrega para r1 o tamanho da sexta mensagem ("_____")
 	
 	DesenhaTelaTermo_Loop:
 
@@ -683,51 +652,104 @@ Compara:
 	push r6
 	push r7
 
-	loadn r5, #5  			;iterador
-	loadn r6, #0  			;condição de saída dos loops
 	loadn r0, #PalavraCmp 	;carrega para r0 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
 	load r1, Palavra1		;ponteiro para a palavra a ser copiada
 	Call CopiaPalavra
 	loadn r1, #Palavra	    ;carrega para r0 o endereço contido da variável Palavra para que ele sirva de ponteiro para a palavra digitada pelo usuário
-	
-	Compara_Loop1:
+	Call VerificaVerde
+	loadn r1, #Palavra	    ;carrega para r0 o endereço contido da variável Palavra para que ele sirva de ponteiro para a palavra digitada pelo usuário
+	Call VerificaAmarelo
+
+	pop r7
+	pop r6
+	pop r5
+	pop r4
+	pop r3
+	pop r2
+	pop r1
+	pop r0
+	pop fr
+
+	rts
+;------------------------------------------------------------
+
+VerificaVerde:
+
+	push fr
+	push r0
+	push r1
+	push r2
+	push r3
+	push r4
+	push r5
+	push r6
+	push r7
+
+	loadn r4, #5  			;iterador
+	loadn r5, #5  			;iterador
+
+	VerificaVerde_Loop:
 
 		loadi r3, r1			;salva em r1 o conteúdo do endereço de memória para o qual r1 aponta
 		loadi r2, r0			;salva em r2 o conteúdo do endereço de memória para o qual r0 aponta
 		cmp r2, r3				;verifica se as letras são iguais
-		ceq SetaCorLetraVerde	;altera a cor da letra
+		ceq SetaCorLetra    	;altera a cor da letra
 		inc r0					;avança o ponteiro de "Palavra1"
 		inc r1					;avança o ponteiro de "Palavra"
 		dec r5					;diminui uma iteração
-		cmp r5, r6				;verifica se chegou ao fim da comparação
-		jne Compara_Loop1		;verifica se o loop chegou ao fim
+		dec r4					;diminui uma iteração
+		jnz VerificaVerde_Loop		;verifica se o loop chegou ao fim
 
+	pop r7
+	pop r6
+	pop r5
+	pop r4
+	pop r3
+	pop r2
+	pop r1
+	pop r0
+	pop fr
 
+	rts
+
+VerificaAmarelo:
+
+	push fr
+	push r0
+	push r1
+	push r2
+	push r3
+	push r4
+	push r5
+	push r6
+	push r7
+
+	loadn r6, #0
 	loadn r5, #5  			;iterador da palavra digitada
-	loadn r1, #Palavra	    ;carrega para r0 o endereço contido da variável Palavra para que ele sirva de ponteiro para a palavra digitada pelo usuário
-	
 
-	Compara_Loop2_Externo:
+	VerificaAmarelo_Loop_Externo:
 		
 		loadn r4, #5  		;iterador da palavra sorteada
 		loadi r3, r1		;salva em r1 o conteúdo do endereço de memória para o qual r1 aponta
 		loadn r0, #PalavraCmp 	;carrega para r0 o endereço contido em "Palavra1" para que ele sirva de ponteiro para a primeira palavra
 
-		Compara_Loop2_Interno:
+		VerificaAmarelo_Loop_Interno:
 
 			loadi r2, r0		;salva em r2 o conteúdo do endereço de memória para o qual r0 aponta	
 			cmp r2, r3			;verifica se as letras são iguais
-			ceq SetaCorLetraAmarelo	;altera a cor da letra
+			ceq SetaCorLetra 	;altera a cor da letra
 			dec r4				;indica que uma iteração foi realizada
 			inc r0				;avança o ponteiro
 			cmp r4, r6			;verifica se o loop chegou ao fim
-			jne Compara_Loop2_Interno ;sai do loop quando toda a palavra for comparada
+			jne VerificaAmarelo_Loop_Interno ;sai do loop quando toda a palavra for comparada
 
 		dec r5					;indica que uma letra foi comparada com a palavra toda
 		inc r1 					;avança o ponteiro
 		cmp r5, r6			;verifica se o loop chegou ao fim
-		jne Compara_Loop2_Externo ;sai do loop quando todas as palavras tiverem sido verificadas
+		jne VerificaAmarelo_Loop_Externo ;sai do loop quando todas as palavras tiverem sido verificadas
 
+
+	
 	pop r7
 	pop r6
 	pop r5
@@ -778,7 +800,7 @@ CopiaPalavra:
 ;----------------------------------------------------
 ; Descrição: Soma o código correspondente à cor verde|
 ;----------------------------------------------------
-SetaCorLetraVerde:
+SetaCorLetra:
 
 	push fr
 	push r0
@@ -788,47 +810,20 @@ SetaCorLetraVerde:
 
 	loadn r2, #'-'	;carrega o valor '-' para r2
 	storei r0, r2	;coloca '-' no lugar da letra
-	loadn r2, #512 	;código da cor verde
-	add r3, r3, r2	;muda a cor da letra para a cor desejada
-	storei r1, r3	;salva as alterações
-
-	pop r3
-	pop r2
-	pop r1
-	pop r0
-	pop fr
-
-	rts
-;----------------------------------------------------
-
-;-------------------------------------------------------
-; 			 	 Seta Cor Letra Amarelo                 |
-;-------------------------------------------------------
-; Descrição: Soma o código correspondente à cor amarela |
-;-------------------------------------------------------
-SetaCorLetraAmarelo:
-
-	push fr
-	push r0
-	push r1
-	push r2
-	push r3
-	push r4
-	push r5
 
 	cmp r4, r5
-	jeq SetaCorLetraAmarelo_Ignora
+	jne SetaCorLetra_Amarelo
+	loadn r2, #3072 ;troquei temporariamente o verde por azul#512 	;código da cor verde	
+	jmp SetaCorLetra_Fim
 
-	loadn r2, #'-' 	;carrega o valor '-' para r2
-	storei r0, r2	;coloca '-' no lugar da letra
-	loadn r2, #2816 ;código da cor amarela
+	SetaCorLetra_Amarelo:
+
+		loadn r2, #2816 ;código da cor amarela
+
+	SetaCorLetra_Fim:
 	add r3, r3, r2	;muda a cor da letra para a cor desejada
 	storei r1, r3	;salva as alterações
 
-	SetaCorLetraAmarelo_Ignora:
-
-	pop r5
-	pop r4
 	pop r3
 	pop r2
 	pop r1
@@ -851,22 +846,33 @@ Dueto:
 	push r2
 	push r3
 	push r4
+	push r5
+	push r6
+	push r7
 	
 	Call DesenhaTelaDueto
 	Call SortearPalavra
-
-	loadn r0, #369 ;carrega a posição na qual deve se iniciar a impressão
-	loadn r1, #80  ;fator para pular duas linhas
-	loadn r2, #7   ;numero de tentativas
+	
+	loadn r1, #369 ;carrega a posição na qual deve se iniciar a impressão
+	loadn r2, #5   ;tamanho da palavra
+	loadn r6, #80  ;fator para pular duas linhas
+	loadn r7, #7   ;numero de tentativas
 
 	Dueto_Loop:
 	
 		Call InputPalavra ;lê a palavra
-		add r0, r0, r1	  ;seta a posição para imprimir a nova mensagem duas linhas abaixo
-		;Call Compara;falta implementar
-		dec r2;
+		loadn r0, #Palavra
+		Call Compara
+		loadn r0, #Palavra
+		Call Compara
+		Call ImprimePalavra ;imprime a palavra com as colorida
+		add r1, r1, r6	  ;seta a posição para imprimir a nova mensagem duas linhas abaixo
+		dec r7;
 		jnz Dueto_Loop
 
+	pop r7
+	pop r6
+	pop r5
 	pop r4
 	pop r3
 	pop r2
@@ -897,7 +903,6 @@ DesenhaTelaDueto:
 	Call ApagaTelaInicial
 	loadn r0, #Msgn7 ;carrega para r0 o endereço no qual começa a sexta mensagem ("DUETO")
 	loadn r1, #54 ; carrega a posição na qual deve se iniciar a impressão
-	load r2, Msgn7_len ; carrega para r1 o tamanho da sexta mensagem ("DUETO")
 	Call ImprimePalavra ;imprime a mensagem 
 
 	loadn r3, #10 ;espaçamento das margens
@@ -906,7 +911,6 @@ DesenhaTelaDueto:
 	loadn r6, #40 ;fator para pular uma linha entre as impressões
 	loadn r1, #359 ; carrega a posição na qual deve se iniciar a impressão
 	loadn r0, #Msgn9 ;carrega para r0 o endereço no qual começa a sexta mensagem ("____")
-	load r2, Msgn9_len ; carrega para r1 o tamanho da sexta mensagem ("_____")
 	
 	DesenhaTelaDueto_Loop:
 
@@ -944,22 +948,30 @@ Quarteto:
 	push r2
 	push r3
 	push r4
+	push r5
+	push r6
+	push r7
 	
 	Call DesenhaTelaQuarteto
 	Call SortearPalavra
 
-	loadn r0, #363 ;carrega a posição na qual deve se iniciar a impressão
-	loadn r1, #80  ;fator para pular duas linhas
-	loadn r2, #9   ;numero de tentativas
+	;loadn r0, #Palavra
+	loadn r1, #363 ;carrega a posição na qual deve se iniciar a impressão
+	loadn r2, #5   ;tamanho da palavra
+	loadn r6, #80  ;fator para pular duas linhas
+	loadn r7, #9   ;numero de tentativas
 
 	Dueto_Loop:
 	
 		Call InputPalavra ;lê a palavra
-		add r0, r0, r1	  ;seta a posição para imprimir a nova mensagem duas linhas abaixo
+		add r1, r1, r6	  ;seta a posição para imprimir a nova mensagem duas linhas abaixo
 		;Call Compara;falta implementar
-		dec r2;
+		dec r7;
 		jnz Dueto_Loop
 
+	pop r7
+	pop r6
+	pop r5
 	pop r4
 	pop r3
 	pop r2
@@ -991,7 +1003,6 @@ DesenhaTelaQuarteto:
 	Call ApagaTelaInicial
 	loadn r0, #Msgn8 ;carrega para r0 o endereço no qual começa a sexta mensagem ("DUETO")
 	loadn r1, #54 ; carrega a posição na qual deve se iniciar a impressão
-	load r2, Msgn8_len ; carrega para r1 o tamanho da sexta mensagem ("DUETO")
 	Call ImprimePalavra ;imprime a mensagem 
 
 	loadn r3, #4 ;espaçamento das margens
@@ -1000,7 +1011,6 @@ DesenhaTelaQuarteto:
 	loadn r6, #40 ;fator para pular uma linha entre as impressões
 	loadn r1, #359 ; carrega a posição na qual deve se iniciar a impressão
 	loadn r0, #Msgn9 ;carrega para r0 o endereço no qual começa a sexta mensagem ("____")
-	load r2, Msgn9_len ; carrega para r1 o tamanho da sexta mensagem ("_____")
 	
 	DesenhaTelaQuarteto_Loop:
 
@@ -1124,7 +1134,7 @@ SortearPalavra:
 	mul r0, r0, r1 		;calcula a posição onde se inicia a palavra e armazena o resultado em r0
 	add r0, r0, r5	  	;soma o endereço da primeira palavra com o resultado do módulo do número do número aleatório multiplicado pelo tamanho das palavras para selecionar uma palavra
 	store Palavra2, r0	;salva a posição inicial da palavra selecionada na variável "Palavra2"
-	loadn r1, #'2'		;carrega o código ascii do caractere '1' para r1
+	loadn r1, #'2'		;carrega o código ascii do caractere '2' para r1
 	cmp r1, r2			;verifica se o modo de jogo é 1, nesse caso apenas uma palavra é necessária
 	jeq SortearPalavra_FIm ;sai da subrotina em caso afirmativo
 
