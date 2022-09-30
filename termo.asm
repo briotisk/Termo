@@ -601,12 +601,12 @@ Termo:
 
 	Termo_Loop:
 	
-		add r1, r1, r6	  ;pula duas linhas para escrever a próxima palavra
-		Call InputPalavra ;lê a palavra
-		Call Compara
-		Call ImprimePalavra
-		dec r7;
-		jnz Termo_Loop
+		add r1, r1, r6	  	;pula duas linhas para escrever a próxima palavra
+		Call InputPalavra 	;lê a palavra
+		Call Compara 	   	;compara a palavra digitada com a sorteada e ajusta as cores
+		Call ImprimePalavra ;imprime a palavra com as colorida
+		dec r7;				;diminui uma iteração
+		jnz Termo_Loop 		;continua no loop até se encerrarem as tentativas
 
 	pop r7
 	pop r6
@@ -683,22 +683,24 @@ Compara:
 	push r6
 	push r7
 
+	loadn r4, #5  			;iterador
 	loadn r5, #5  			;iterador
 	loadn r6, #0  			;condição de saída dos loops
 	loadn r0, #PalavraCmp 	;carrega para r0 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
 	load r1, Palavra1		;ponteiro para a palavra a ser copiada
 	Call CopiaPalavra
 	loadn r1, #Palavra	    ;carrega para r0 o endereço contido da variável Palavra para que ele sirva de ponteiro para a palavra digitada pelo usuário
-	
+
 	Compara_Loop1:
 
 		loadi r3, r1			;salva em r1 o conteúdo do endereço de memória para o qual r1 aponta
 		loadi r2, r0			;salva em r2 o conteúdo do endereço de memória para o qual r0 aponta
 		cmp r2, r3				;verifica se as letras são iguais
-		ceq SetaCorLetraVerde	;altera a cor da letra
+		ceq SetaCorLetra    	;altera a cor da letra
 		inc r0					;avança o ponteiro de "Palavra1"
 		inc r1					;avança o ponteiro de "Palavra"
 		dec r5					;diminui uma iteração
+		dec r4					;diminui uma iteração
 		cmp r5, r6				;verifica se chegou ao fim da comparação
 		jne Compara_Loop1		;verifica se o loop chegou ao fim
 
@@ -717,7 +719,7 @@ Compara:
 
 			loadi r2, r0		;salva em r2 o conteúdo do endereço de memória para o qual r0 aponta	
 			cmp r2, r3			;verifica se as letras são iguais
-			ceq SetaCorLetraAmarelo	;altera a cor da letra
+			ceq SetaCorLetra 	;altera a cor da letra
 			dec r4				;indica que uma iteração foi realizada
 			inc r0				;avança o ponteiro
 			cmp r4, r6			;verifica se o loop chegou ao fim
@@ -739,6 +741,7 @@ Compara:
 	pop fr
 
 	rts
+;------------------------------------------------------------
 
 ;--------------------------------------------------
 ; 			 	 	Copia Palavra		  		   |
@@ -778,7 +781,7 @@ CopiaPalavra:
 ;----------------------------------------------------
 ; Descrição: Soma o código correspondente à cor verde|
 ;----------------------------------------------------
-SetaCorLetraVerde:
+SetaCorLetra:
 
 	push fr
 	push r0
@@ -788,47 +791,20 @@ SetaCorLetraVerde:
 
 	loadn r2, #'-'	;carrega o valor '-' para r2
 	storei r0, r2	;coloca '-' no lugar da letra
-	loadn r2, #512 	;código da cor verde
-	add r3, r3, r2	;muda a cor da letra para a cor desejada
-	storei r1, r3	;salva as alterações
-
-	pop r3
-	pop r2
-	pop r1
-	pop r0
-	pop fr
-
-	rts
-;----------------------------------------------------
-
-;-------------------------------------------------------
-; 			 	 Seta Cor Letra Amarelo                 |
-;-------------------------------------------------------
-; Descrição: Soma o código correspondente à cor amarela |
-;-------------------------------------------------------
-SetaCorLetraAmarelo:
-
-	push fr
-	push r0
-	push r1
-	push r2
-	push r3
-	push r4
-	push r5
 
 	cmp r4, r5
-	jeq SetaCorLetraAmarelo_Ignora
+	jne SetaCorLetra_Amarelo
+	loadn r2, #512 	;código da cor verde	
+	jmp SetaCorLetra_Fim
 
-	loadn r2, #'-' 	;carrega o valor '-' para r2
-	storei r0, r2	;coloca '-' no lugar da letra
-	loadn r2, #2816 ;código da cor amarela
+	SetaCorLetra_Amarelo:
+
+		loadn r2, #2816 ;código da cor amarela
+
+	SetaCorLetra_Fim:
 	add r3, r3, r2	;muda a cor da letra para a cor desejada
 	storei r1, r3	;salva as alterações
 
-	SetaCorLetraAmarelo_Ignora:
-
-	pop r5
-	pop r4
 	pop r3
 	pop r2
 	pop r1
