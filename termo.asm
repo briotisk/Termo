@@ -190,6 +190,8 @@ Msgn8: string "Q U A R T E T O"
 Msgn8_len: var #1
 Msgn9: string "_____"
 Msgn9_len: var #1
+Msgn10: string "Parabens!!"
+Msgn10_len: var #1
 ;----------Inicio Programa Principal----------
 main:
 	
@@ -207,6 +209,8 @@ main:
 	store Msgn4_len, r0		;salva o conteúdo de r0 na variável
 	loadn r0, #15 			;carrega o tamanho da mensagem 8 (15 chars) para r0
 	store Msgn8_len, r0		;salva o conteúdo de r0 na variável
+	loadn r0, #10 			;carrega o tamanho da mensagem 10 (10 chars) para r0
+	store Msgn10_len, r0	;salva o conteúdo de r0 na variável
 
 	Call DesenhaTelaInicial	;imprime as mensagens inicais na tela
 	Call InputModo		    ;recebe o modo de jogo e desencadeia a geração de um número pseudo aleatório
@@ -677,6 +681,7 @@ Compara:
 	push r4
 	push r5
 	push r6
+	push r7
 
 	loadn r5, #5  			;iterador
 	loadn r6, #0  			;condição de saída dos loops
@@ -723,6 +728,7 @@ Compara:
 		cmp r5, r6			;verifica se o loop chegou ao fim
 		jne Compara_Loop2_Externo ;sai do loop quando todas as palavras tiverem sido verificadas
 
+	pop r7
 	pop r6
 	pop r5
 	pop r4
