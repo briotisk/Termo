@@ -169,6 +169,7 @@ Palavra1: var #1
 Palavra2: var #1
 Palavra3: var #1
 Palavra4: var #1
+PalavraCmp: var #5
 
 ;---------Mensagens usadas no program seguidas de ses respectivos comprimentos---------
 Msgn1: string "Escolha um modo para jogar"
@@ -671,30 +672,61 @@ Compara:
 	push r5
 	push r6
 
-	loadn r5, #5  		;iterador da palavra digitada
-	loadn r6, #0  		;condição de saída dos loops
-	loadn r1, #Palavra 	;carrega para r0 o endereço contido da variável Palavra para que ele sirva de ponteiro para a palavra digitada pelo usuário
+	loadn r5, #5  			;iterador
+	loadn r6, #0  			;condição de saída dos loops
+	loadn r1, #Palavra	    ;carrega para r0 o endereço contido da variável Palavra para que ele sirva de ponteiro para a palavra digitada pelo usuário
+	loadn r0, #PalavraCmp 	;carrega para r0 o endereço contido em "Palavra1" para que ele sirva de ponteiro para a primeira palavra
+	Call CopiaPalavra
+
+	Compara_Loop1:
+
+		loadi r3, r1			;salva em r1 o conteúdo do endereço de memória para o qual r1 aponta
+		loadi r2, r0			;salva em r2 o conteúdo do endereço de memória para o qual r0 aponta
+		cmp r2, r3				;verifica se as letras são iguais
+		ceq SetaCorLetraVerde	;altera a cor da letra
+		inc r0					;avança o ponteiro de "Palavra1"
+		inc r1					;avança o ponteiro de "Palavra"
+		dec r5					;diminui uma iteração
+		cmp r5, r6				;verifica se chegou ao fim da comparação
+		jne Compara_Loop1		;verifica se o loop chegou ao fim
+
+
+	loadn r0, #PalavraCmp ;carrega para r0 o endereço no qual começa a sexta mensagem ("TERMO")
+	loadn r1, #134 ; carrega a posição na qual deve se iniciar a impressão
+	loadn r2, #5 ; carrega para r1 o tamanho da sexta mensagem ("TERMO")
+	Call ImprimePalavra ;imprime a mensagem 
+	breakp
+
+		loadn r5, #5  			;iterador da palavra digitada
+		loadn r1, #Palavra	    ;carrega para r0 o endereço contido da variável Palavra para que ele sirva de ponteiro para a palavra digitada pelo usuário
 	
-	Compara_LoopExterno:
+
+	Compara_Loop2_Externo:
 		
 		loadn r4, #5  		;iterador da palavra sorteada
 		loadi r3, r1		;salva em r1 o conteúdo do endereço de memória para o qual r1 aponta
-		load r0, Palavra1 	;carrega para r0 o endereço contido em "Palavra1" para que ele sirva de ponteiro para a primeira palavra
+		loadn r0, #PalavraCmp 	;carrega para r0 o endereço contido em "Palavra1" para que ele sirva de ponteiro para a primeira palavra
 
-		Compara_LoopInterno:
+		Compara_Loop2_Interno:
 
-			loadi r2, r0		;salva em r2 o conteúdo do endereço de memória para o qual r0 aponta
+			loadi r2, r0		;salva em r2 o conteúdo do endereço de memória para o qual r0 aponta	
 			cmp r2, r3			;verifica se as letras são iguais
-			ceq SetaCorLetra	;altera a cor da letra
+			ceq SetaCorLetraAmarelo	;altera a cor da letra
 			dec r4				;indica que uma iteração foi realizada
 			inc r0				;avança o ponteiro
 			cmp r4, r6			;verifica se o loop chegou ao fim
-			jne Compara_LoopInterno ;sai do loop quando toda a palavra for comparada
+			jne Compara_Loop2_Interno ;sai do loop quando toda a palavra for comparada
 
 		dec r5					;indica que uma letra foi comparada com a palavra toda
 		inc r1 					;avança o ponteiro
 		cmp r5, r6			;verifica se o loop chegou ao fim
-		jne Compara_LoopExterno ;sai do loop quando todas as palavras tiverem sido verificadas
+		jne Compara_Loop2_Externo ;sai do loop quando todas as palavras tiverem sido verificadas
+
+	loadn r0, #PalavraCmp ;carrega para r0 o endereço no qual começa a sexta mensagem ("TERMO")
+	loadn r1, #134 ; carrega a posição na qual deve se iniciar a impressão
+	loadn r2, #5 ; carrega para r1 o tamanho da sexta mensagem ("TERMO")
+	Call ImprimePalavra ;imprime a mensagem 
+	breakp
 
 	pop r6
 	pop r5
@@ -707,12 +739,69 @@ Compara:
 
 	rts
 
+
+CopiaPalavra:
+
+	push fr
+	push r0
+	push r1
+	push r2
+	push r3
+
+	loadn r0, #5  			;iterador da estrutura de repetição
+	load r1, Palavra1		;ponteiro para a palavra a ser copiada
+	loadn r2, #PalavraCmp	;ponteiro para a veriável onde vai ser copiada a palavra
+
+	CopiaPalavra_Loop:
+
+		loadi r3, r1			;carrega rum char para r3
+		storei r2, r3			;salva um char na memória
+		inc r1					;avança o ponteiro
+		inc r2					;avança o ponteiro
+		dec r0					;decrementa o iterador
+		jnz CopiaPalavra_Loop	;sai do loop após as 5 iterações
+
+	pop r3
+	pop r2
+	pop r1
+	pop r0
+	pop fr
+
+	rts
 ;----------------------------------------------------
 ; 			 	 	Seta Cor Letra 		  			 |
 ;----------------------------------------------------
 ; Descrição: Soma o código correspondente à desejada |
 ;----------------------------------------------------
-SetaCorLetra:
+SetaCorLetraVerde:
+
+	push fr
+	push r0
+	push r1
+	push r2
+	push r3
+
+	loadn r2, #'-'	;carrega o valor '-' para r2
+	storei r0, r2	;coloca '-' no lugar da letra
+	loadn r2, #512 	;código da cor verde
+	add r3, r3, r2	;muda a cor da letra para a cor desejada
+	storei r1, r3	;salva as alterações
+
+	pop r3
+	pop r2
+	pop r1
+	pop r0
+	pop fr
+
+	rts
+;----------------------------------------------------
+
+;----------------------------------------------------
+; 			 	 	Seta Cor Letra 		  			 |
+;----------------------------------------------------
+; Descrição: Soma o código correspondente à desejada |
+;----------------------------------------------------
+SetaCorLetraAmarelo:
 
 	push fr
 	push r0
@@ -723,23 +812,15 @@ SetaCorLetra:
 	push r5
 
 	cmp r4, r5
-	jeq SomaVerde
-	jne SomaAmarelo
+	jeq SetaCorLetraAmarelo_Ignora
 
+	loadn r2, #'-' 	;carrega o valor '-' para r2
+	storei r0, r2	;coloca '-' no lugar da letra
+	loadn r2, #2816 ;código da cor amarela
+	add r3, r3, r2	;muda a cor da letra para a cor desejada
+	storei r1, r3	;salva as alterações
 
-	SomaVerde:
-
-		loadn r0, #512 	;código da cor verde
-		jmp SetaCorLetra_Fim	;pula para o fim da subrotina
-
-	SomaAmarelo:
-
-		loadn r0, #2816 ;código da cor amarela
-
-	SetaCorLetra_Fim:
-
-		add r3, r3, r0	;muda a cor da letra para a cor desejada
-		storei r1, r3	;salva as alterações
+	SetaCorLetraAmarelo_Ignora:
 
 	pop r5
 	pop r4
@@ -751,7 +832,6 @@ SetaCorLetra:
 
 	rts
 ;----------------------------------------------------
-
 ;-----------------------------------------------
 ; 			 	 	  Dueto 		  			|
 ;-----------------------------------------------
