@@ -170,6 +170,7 @@ Palavra2: var #1 	;armazena a segunda palavra sorteada
 Palavra3: var #1 	;armazena a terceira palavra sorteada
 Palavra4: var #1 	;armazena a quarta palavra sorteada
 PalavraCmp: var #6 	;armazena uma cópia da palavra sorteada para a comparação
+PalavraCp: var #6 	;armazena uma cópia da palavra digitada para a comparação
 PalavraCp1: var #6 	;
 PalavraCp2: var #6 	;
 PalavraCp3: var #6 	;
@@ -568,7 +569,7 @@ Termo:
 	Call DesenhaTelaTermo
 	Call SortearPalavra
 
-	loadn r0, #Palavra
+	loadn r0, #PalavraCp
 	loadn r1, #376 ;carrega a posição na qual deve se iniciar a impressão
 	loadn r6, #80  ;fator para pular duas linhas
 	loadn r7, #6   ;numero de tentativas
@@ -577,10 +578,12 @@ Termo:
 	
 		add r1, r1, r6	  		;pula duas linhas para escrever a próxima palavra
 		Call InputPalavra 		;lê a palavra
-		;load r3, Palavra1		;ponteiro para a palavra a ser comparada
-		;loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
+		loadn r3, #Palavra		;
+		loadn r2, #PalavraCp	;
+		call CopiaPalavra 		;
 		load r3, Palavra1		;ponteiro para a palavra a ser comparada
 		loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
+		Call CopiaPalavra 		;chamada da subrotina que faz uma cópia da palavra cujo ponteiro está guardado em r2 para que possa ser alterada durante a comparação
 		Call Compara 	   		;compara a palavra digitada com a sorteada e ajusta as cores
 		Call ImprimePalavra 	;imprime a palavra com as colorida
 		dec r7;					;diminui uma iteração
@@ -659,10 +662,10 @@ Compara:
 	push r6
 	push r7
 
-	Call CopiaPalavra 		;chamada da subrotina que faz uma cópia da palavra cujo ponteiro está guardado em r2 para que possa ser alterada durante a comparação
-	loadn r1, #Palavra	    ;carrega para r1 o endereço contido da variável Palavra para que ele sirva de ponteiro para a palavra digitada pelo usuário
+	loadn r2, #PalavraCmp
+	loadn r1, #PalavraCp	    ;carrega para r1 o endereço contido da variável Palavra para que ele sirva de ponteiro para a palavra digitada pelo usuário
 	Call VerificaVerde 		;verifica quais letras estão na posição certa
-	loadn r1, #Palavra	    ;carrega para r0 o endereço contido da variável Palavra para que ele sirva de ponteiro para a palavra digitada pelo usuário
+	loadn r1, #PalavraCp	    ;carrega para r0 o endereço contido da variável Palavra para que ele sirva de ponteiro para a palavra digitada pelo usuário
 	Call VerificaAmarelo 	;verifica quais as letras pertencem à palavra mas estão na posição errada
 
 	pop r7
