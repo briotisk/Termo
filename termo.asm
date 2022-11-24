@@ -785,31 +785,29 @@ VerificaAmarelo:
 	push r6
 	push r7
 
-	loadn r6, #0
+	loadn r0, #0
 	loadn r5, #5  			;iterador da palavra digitada
 
 	VerificaAmarelo_Loop_Externo:
 		
 		loadn r4, #5  		;iterador da palavra sorteada
 		loadi r3, r1		;salva em r1 o conteúdo do endereço de memória para o qual r1 aponta
-		loadn r0, #PalavraCmp 	;carrega para r0 o endereço contido em "Palavra1" para que ele sirva de ponteiro para a primeira palavra
+		loadn r2, #PalavraCmp 	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro para a primeira palavra
 
 		VerificaAmarelo_Loop_Interno:
 
-			loadi r2, r0		;salva em r2 o conteúdo do endereço de memória para o qual r0 aponta	
-			cmp r2, r3			;verifica se as letras são iguais
+			loadi r6, r2		;salva em r6 o conteúdo do endereço de memória para o qual r2 aponta	
+			cmp r6, r3			;verifica se as letras são iguais
 			ceq SetaCorLetra 	;altera a cor da letra
 			dec r4				;indica que uma iteração foi realizada
-			inc r0				;avança o ponteiro
-			cmp r4, r6			;verifica se o loop chegou ao fim
+			inc r2				;avança o ponteiro
+			cmp r4, r0			;verifica se o loop chegou ao fim
 			jne VerificaAmarelo_Loop_Interno ;sai do loop quando toda a palavra for comparada
 
 		dec r5					;indica que uma letra foi comparada com a palavra toda
 		inc r1 					;avança o ponteiro
-		cmp r5, r6			;verifica se o loop chegou ao fim
+		cmp r5, r0			;verifica se o loop chegou ao fim
 		jne VerificaAmarelo_Loop_Externo ;sai do loop quando todas as palavras tiverem sido verificadas
-
-
 	
 	pop r7
 	pop r6
