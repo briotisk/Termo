@@ -161,19 +161,19 @@ string "vital"
 ;[OBSERVAÇÃO: Ao acrescentar palavras, mudar o valor de r4 na subrotina "SortearPalavra"]
 
 ;---------Declaração das variáveis globais---------
-Letra: var #1
-Modo: var #1
-Palavra: var #6
-NumAleat: var #1
-Palavra1: var #1
-Palavra2: var #1
-Palavra3: var #1
-Palavra4: var #1
-PalavraCmp: var #6
-PalavraCp1: var #6
-PalavraCp2: var #6
-PalavraCp3: var #6
-PalavraCp4: var #6
+Letra: var #1  		;armazena uma letra
+Modo: var #1 		;armazena o modo de jogo (1 - Termo, 2 - Dueto ou 3 - Quarteto)
+Palavra: var #6 	;armazena a palavra digitada
+NumAleat: var #1 	;armazena um número pseudo aleatório gerado para servir como seed na escolha das palavras
+Palavra1: var #1 	;armazena a primeira palavra sorteada
+Palavra2: var #1 	;armazena a segunda palavra sorteada
+Palavra3: var #1 	;armazena a terceira palavra sorteada
+Palavra4: var #1 	;armazena a quarta palavra sorteada
+PalavraCmp: var #6 	;armazena uma cópia da palavra sorteada para a comparação
+PalavraCp1: var #6 	;
+PalavraCp2: var #6 	;
+PalavraCp3: var #6 	;
+PalavraCp4: var #6 	;
 
 ;---------Mensagens usadas no program seguidas de ses respectivos comprimentos---------
 Msgn1: string "Escolha um modo para jogar"
@@ -298,8 +298,8 @@ ImprimePalavra:
 	ImprimePalavra_Loop:
 
 		loadi r3, r0	;carrega para r3 o caractere presente no endereço salvo em r0
-		cmp r3, r2
-		jeq ImprimePalavra_Fim
+		cmp r3, r2 		;verifica se chegou ao fim da palavra, ou seja, se o caractere analisado é o '\0'
+		jeq ImprimePalavra_Fim ;se chegou ao fim da palavra dá pop nos registradores e sai da subrotina
 		outchar r3, r1  ;imprime o caractere em r3 na posição r1
 		inc r0          ;avança para a próxima letra
 		inc r1			;avança para a próxima posição
@@ -575,13 +575,16 @@ Termo:
 
 	Termo_Loop:
 	
-		add r1, r1, r6	  	;pula duas linhas para escrever a próxima palavra
-		Call InputPalavra 	;lê a palavra
-		load r3, Palavra1	;ponteiro para a palavra a ser comparada
-		Call Compara 	   	;compara a palavra digitada com a sorteada e ajusta as cores
-		Call ImprimePalavra ;imprime a palavra com as colorida
-		dec r7;				;diminui uma iteração
-		jnz Termo_Loop 		;continua no loop até se encerrarem as tentativas
+		add r1, r1, r6	  		;pula duas linhas para escrever a próxima palavra
+		Call InputPalavra 		;lê a palavra
+		;load r3, Palavra1		;ponteiro para a palavra a ser comparada
+		;loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
+		load r3, Palavra1		;ponteiro para a palavra a ser comparada
+		loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
+		Call Compara 	   		;compara a palavra digitada com a sorteada e ajusta as cores
+		Call ImprimePalavra 	;imprime a palavra com as colorida
+		dec r7;					;diminui uma iteração
+		jnz Termo_Loop 			;continua no loop até se encerrarem as tentativas
 
 	pop r7
 	pop r6
@@ -656,9 +659,8 @@ Compara:
 	push r6
 	push r7
 
-	loadn r0, #PalavraCmp 	;carrega para r0 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
-	Call CopiaPalavra 		;chamada da subrotina que faz uma cópia da palavra ue possa ser alterada durante a comparação
-	loadn r1, #Palavra	    ;carrega para r0 o endereço contido da variável Palavra para que ele sirva de ponteiro para a palavra digitada pelo usuário
+	Call CopiaPalavra 		;chamada da subrotina que faz uma cópia da palavra cujo ponteiro está guardado em r2 para que possa ser alterada durante a comparação
+	loadn r1, #Palavra	    ;carrega para r1 o endereço contido da variável Palavra para que ele sirva de ponteiro para a palavra digitada pelo usuário
 	Call VerificaVerde 		;verifica quais letras estão na posição certa
 	loadn r1, #Palavra	    ;carrega para r0 o endereço contido da variável Palavra para que ele sirva de ponteiro para a palavra digitada pelo usuário
 	Call VerificaAmarelo 	;verifica quais as letras pertencem à palavra mas estão na posição errada
@@ -694,10 +696,10 @@ VerificaVerde:
 	VerificaVerde_Loop:
 
 		loadi r3, r1			;salva em r1 o conteúdo do endereço de memória para o qual r1 aponta
-		loadi r2, r0			;salva em r2 o conteúdo do endereço de memória para o qual r0 aponta
-		cmp r2, r3				;verifica se as letras são iguais
+		loadi r0, r2			;salva em r2 o conteúdo do endereço de memória para o qual r0 aponta
+		cmp r0, r3				;verifica se as letras são iguais
 		ceq SetaCorLetra    	;altera a cor da letra
-		inc r0					;avança o ponteiro de "Palavra1"
+		inc r2					;avança o ponteiro de "Palavra1"
 		inc r1					;avança o ponteiro de "Palavra"
 		dec r5					;diminui uma iteração
 		dec r4					;diminui uma iteração
@@ -778,15 +780,15 @@ CopiaPalavra:
 	push r2
 	push r3
 
-	loadn r2, #5  			;iterador da estrutura de repetição
+	loadn r0, #5  			;iterador da estrutura de repetição
 
 	CopiaPalavra_Loop:
 
 		loadi r1, r3			;carrega um char para r1
-		storei r0, r1			;salva um char na memória
+		storei r2, r1			;salva um char na memória
 		inc r3					;avança o ponteiro
-		inc r0					;avança o ponteiro
-		dec r2					;decrementa o iterador
+		inc r2					;avança o ponteiro
+		dec r0					;decrementa o iterador
 		jnz CopiaPalavra_Loop	;sai do loop após as 5 iterações
 
 	pop r3
@@ -858,26 +860,36 @@ Dueto:
 	
 	loadn r1, #359 ;carrega a posição na qual deve se iniciar a impressão
 	loadn r6, #55  ;fator para pular uma linha
-	loadn r2, #10  ;espaçamento das margens
+	loadn r5, #10  ;espaçamento das margens
 	loadn r4, #15  ;espaço entre as palavras impressas somado ao tamanho das mensagens
 	loadn r7, #7   ;numero de tentativas
 
 	Dueto_Loop:
 	
-		add r1, r1, r2
+		add r1, r1, r5
 		Call InputPalavra ;lê a palavra
-		loadn r0, #Palavra
+		loadn r0, #Palavra 	;salva em r0 o ponteiro para a variável Palavra, que guarda a palavra digitada
 		load r3, Palavra1	;ponteiro para a palavra a ser comparada
+		loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
 		Call Compara
 		Call ImprimePalavra ;imprime a palavra com as letras coloridas
 		add r1, r1, r4
 		loadn r0, #Palavra
 		load r3, Palavra2	;ponteiro para a palavra a ser comparada
+		loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
 		Call Compara
 		Call ImprimePalavra ;imprime a palavra com as colorida
 		add r1, r1, r6	  ;seta a posição para imprimir a nova mensagem duas linhas abaixo
 		dec r7;
 		jnz Dueto_Loop
+
+		;add r1, r1, r6	  		;pula duas linhas para escrever a próxima palavra
+		;Call InputPalavra 		;lê a palavra
+		;load r3, Palavra1		;ponteiro para a palavra a ser comparada
+		;loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
+		;Call Compara 	   		;compara a palavra digitada com a sorteada e ajusta as cores
+		;Call ImprimePalavra 	;imprime a palavra com as colorida
+		;dec r7;					;diminui uma iteração
 
 	pop r7
 	pop r6
