@@ -869,21 +869,27 @@ SetaCorLetra:
 	push r2
 	push r3
 
-	loadn r2, #'-'	;carrega o valor '-' para r2
-	storei r0, r2	;coloca '-' no lugar da letra
+	;
+	;troquei r0 por r2 e vice versa nessa subrotina
+	;isso arrumou a comparação mas estragou a impressão 
+	;de algumas mensagens
+	;
+
+	loadn r0, #'-'	;carrega o valor '-' para r2
+	storei r2, r0	;coloca '-' no lugar da letra
 
 	cmp r4, r5
 	jne SetaCorLetra_Amarelo
-	loadn r2, #3072 ;troquei temporariamente o verde por azul#512 	;código da cor verde
+	loadn r0, #3072 ;troquei temporariamente o verde por azul#512 	;código da cor verde
 	inc r7 			;incrementa o número de acertos	
 	jmp SetaCorLetra_Fim
 
 	SetaCorLetra_Amarelo:
 
-		loadn r2, #2816 ;código da cor amarela
+		loadn r0, #2816 ;código da cor amarela
 
 	SetaCorLetra_Fim:
-	add r3, r3, r2	;muda a cor da letra para a cor desejada
+	add r3, r3, r0	;muda a cor da letra para a cor desejada
 	storei r1, r3	;salva as alterações
 
 	pop r3
