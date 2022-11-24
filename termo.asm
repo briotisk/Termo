@@ -510,13 +510,29 @@ ImprimeLetraDueto:
 	push r0
 	push r1
 	push r2
+	push r3
+	push r4
 	
 	loadn r1, #15 ;espaço entre as palavras impressas somado ao tamanho das mensagens
 
+	load r3, Acertos1		;lê a quantidade de acertos da primeira palavra
+	loadn r4, #5
+	cmp r3, r4
+	jeq ImprimeLetraDueto_Palavra2
 	outchar r2, r0 ;imprime o caractere de r2 na posição de r0
+
+	ImprimeLetraDueto_Palavra2:
+	load r3, Acertos2		;lê a quantidade de acertos da primeira palavra
+	loadn r4, #5
+	cmp r3, r4
+	jeq ImprimeLetraDueto_Fim
 	add r0, r0, r1 ;seta a posição para imprimir a nova mensagem com 10 pixels de distancia da primeira
 	outchar r2, r0 ;imprime o caractere de r2 na posição de r0
 
+	ImprimeLetraDueto_Fim:
+
+	pop r4
+	pop r3
 	pop r2
 	pop r1
 	pop r0
@@ -537,17 +553,45 @@ ImprimeLetraQuarteto:
 	push r0
 	push r1
 	push r2
+	push r3
+	push r4
 
 	loadn r1, #9 ;espaço entre as palavras impressas somado ao tamanho das mensagens
 
-	outchar r2, r0 ;imprime o caractere de r2 na posição de r0
-	add r0, r0, r1 ;seta a posição para imprimir a nova mensagem com 10 pixels de distancia da primeira
-	outchar r2, r0 ;imprime o caractere de r2 na posição de r0
-	add r0, r0, r1 ;seta a posição para imprimir a nova mensagem com 10 pixels de distancia da primeira
-	outchar r2, r0 ;imprime o caractere de r2 na posição de r0
-	add r0, r0, r1 ;seta a posição para imprimir a nova mensagem com 10 pixels de distancia da primeira
+	load r3, Acertos1		;lê a quantidade de acertos da primeira palavra
+	loadn r4, #5
+	cmp r3, r4
+	jeq ImprimeLetraQuarteto_Palavra2
 	outchar r2, r0 ;imprime o caractere de r2 na posição de r0
 
+	ImprimeLetraQuarteto_Palavra2:
+	add r0, r0, r1 ;seta a posição para imprimir a nova mensagem com 4 pixels de distancia da anterior
+	load r3, Acertos2		;lê a quantidade de acertos da primeira palavra
+	loadn r4, #5
+	cmp r3, r4
+	jeq ImprimeLetraQuarteto_Palavra3
+	outchar r2, r0 ;imprime o caractere de r2 na posição de r0
+
+	ImprimeLetraQuarteto_Palavra3:
+	add r0, r0, r1 ;seta a posição para imprimir a nova mensagem com 4 pixels de distancia da anterior
+	load r3, Acertos3		;lê a quantidade de acertos da primeira palavra
+	loadn r4, #5
+	cmp r3, r4
+	jeq ImprimeLetraQuarteto_Palavra4
+	outchar r2, r0 ;imprime o caractere de r2 na posição de r0
+
+	ImprimeLetraQuarteto_Palavra4:
+	add r0, r0, r1 ;seta a posição para imprimir a nova mensagem com 4 pixels de distancia da anterior
+	load r3, Acertos4		;lê a quantidade de acertos da primeira palavra
+	loadn r4, #5
+	cmp r3, r4
+	jeq ImprimeLetraQuarteto_Fim
+	outchar r2, r0 ;imprime o caractere de r2 na posição de r0
+
+	ImprimeLetraQuarteto_Fim:
+
+	pop r4
+	pop r3
 	pop r2
 	pop r1
 	pop r0
