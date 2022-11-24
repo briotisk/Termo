@@ -666,7 +666,6 @@ Compara:
 	push r1
 	push r2
 
-	breakp
 	loadn r2, #PalavraCmp
 	loadn r1, #PalavraCp	    ;carrega para r1 o endereço contido da variável Palavra para que ele sirva de ponteiro para a palavra digitada pelo usuário
 	Call VerificaVerde 		;verifica quais letras estão na posição certa
@@ -695,7 +694,6 @@ VerificaVerde:
 
 	loadn r4, #5  			;iterador
 	loadn r5, #5  			;iterador
-	;loadn r6, #4 			;diferença entre o endereço da variável Palavrax e Acertosx
 	loadi r7, r0  			;salva em r7 o número de acertos
 
 	VerificaVerde_Loop:
@@ -874,13 +872,13 @@ Dueto:
 
 	Dueto_Loop:
 	
-		loadn r0, #0
-		store Acertos1, r0	
-		store Acertos2, r0
 		add r1, r1, r5
 		Call InputPalavra ;lê a palavra
+		loadn r0, #0
+		store Acertos1, r0	
 		loadn r3, #Palavra		;
 		loadn r2, #PalavraCp	;
+		loadn r0, #Acertos1
 		call CopiaPalavra 		;
 		load r3, Palavra1		;ponteiro para a palavra a ser comparada
 		loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
@@ -889,8 +887,11 @@ Dueto:
 		loadn r0, #PalavraCp 	;salva em r0 o ponteiro para a variável Palavra, que guarda a palavra digitada
 		Call ImprimePalavra ;imprime a palavra com as letras coloridas
 		add r1, r1, r4
+		loadn r0, #0
+		store Acertos1, r0	
 		loadn r3, #Palavra		;
 		loadn r2, #PalavraCp	;
+		loadn r0, #Acertos2
 		call CopiaPalavra 		;
 		load r3, Palavra2		;ponteiro para a palavra a ser comparada
 		loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
@@ -901,19 +902,7 @@ Dueto:
 		add r1, r1, r6	  ;seta a posição para imprimir a nova mensagem duas linhas abaixo
 		dec r7;
 		jnz Dueto_Loop
-
-
-		;add r1, r1, r6	  		;pula duas linhas para escrever a próxima palavra
-		;Call InputPalavra 		;lê a palavra
-		;loadn r3, #Palavra		;
-		;loadn r2, #PalavraCp	;
-		;call CopiaPalavra 		;
-		;load r3, Palavra1		;ponteiro para a palavra a ser comparada
-		;loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
-		;Call CopiaPalavra 		;chamada da subrotina que faz uma cópia da palavra cujo ponteiro está guardado em r2 para que possa ser alterada durante a comparação
-		;Call Compara 	   		;compara a palavra digitada com a sorteada e ajusta as cores
-		;Call ImprimePalavra 	;imprime a palavra com as colorida
-		;dec r7;	
+	
 
 	pop r7
 	pop r6
@@ -925,7 +914,6 @@ Dueto:
 	pop r0
 	pop fr
 
-	breakp
 	rts
 ;-----------------------------------------------
 
@@ -1069,7 +1057,6 @@ Quarteto:
 	pop r0
 	pop fr
 
-	breakp
 	rts
 ;--------------------------------------------------
 
