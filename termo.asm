@@ -871,28 +871,41 @@ Dueto:
 	
 		add r1, r1, r5
 		Call InputPalavra ;lê a palavra
-		loadn r0, #Palavra 	;salva em r0 o ponteiro para a variável Palavra, que guarda a palavra digitada
-		load r3, Palavra1	;ponteiro para a palavra a ser comparada
+		loadn r3, #Palavra		;
+		loadn r2, #PalavraCp	;
+		call CopiaPalavra 		;
+		load r3, Palavra1		;ponteiro para a palavra a ser comparada
 		loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
-		Call Compara
+		Call CopiaPalavra 		;chamada da subrotina que faz uma cópia da palavra cujo ponteiro está guardado em r2 para que possa ser alterada durante a comparação
+		Call Compara 	   		;compara a palavra digitada com a sorteada e ajusta as cores
+		loadn r0, #PalavraCp 	;salva em r0 o ponteiro para a variável Palavra, que guarda a palavra digitada
 		Call ImprimePalavra ;imprime a palavra com as letras coloridas
 		add r1, r1, r4
-		loadn r0, #Palavra
-		load r3, Palavra2	;ponteiro para a palavra a ser comparada
+		loadn r3, #Palavra		;
+		loadn r2, #PalavraCp	;
+		call CopiaPalavra 		;
+		load r3, Palavra2		;ponteiro para a palavra a ser comparada
 		loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
-		Call Compara
+		Call CopiaPalavra 		;chamada da subrotina que faz uma cópia da palavra cujo ponteiro está guardado em r2 para que possa ser alterada durante a comparação
+		Call Compara 	   		;compara a palavra digitada com a sorteada e ajusta as cores
+		loadn r0, #PalavraCp 	;salva em r0 o ponteiro para a variável Palavra, que guarda a palavra digitada
 		Call ImprimePalavra ;imprime a palavra com as colorida
 		add r1, r1, r6	  ;seta a posição para imprimir a nova mensagem duas linhas abaixo
 		dec r7;
 		jnz Dueto_Loop
 
+
 		;add r1, r1, r6	  		;pula duas linhas para escrever a próxima palavra
 		;Call InputPalavra 		;lê a palavra
+		;loadn r3, #Palavra		;
+		;loadn r2, #PalavraCp	;
+		;call CopiaPalavra 		;
 		;load r3, Palavra1		;ponteiro para a palavra a ser comparada
 		;loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
+		;Call CopiaPalavra 		;chamada da subrotina que faz uma cópia da palavra cujo ponteiro está guardado em r2 para que possa ser alterada durante a comparação
 		;Call Compara 	   		;compara a palavra digitada com a sorteada e ajusta as cores
 		;Call ImprimePalavra 	;imprime a palavra com as colorida
-		;dec r7;					;diminui uma iteração
+		;dec r7;	
 
 	pop r7
 	pop r6
