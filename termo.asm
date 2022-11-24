@@ -164,17 +164,17 @@ string "vital"
 Letra: var #1  		;armazena uma letra
 Modo: var #1 		;armazena o modo de jogo (1 - Termo, 2 - Dueto ou 3 - Quarteto)
 Palavra: var #6 	;armazena a palavra digitada
+PalavraCmp: var #6 	;armazena uma cópia da palavra sorteada para a comparação
+PalavraCp: var #6 	;armazena uma cópia da palavra digitada para a comparação
 NumAleat: var #1 	;armazena um número pseudo aleatório gerado para servir como seed na escolha das palavras
 Palavra1: var #1 	;armazena a primeira palavra sorteada
 Palavra2: var #1 	;armazena a segunda palavra sorteada
 Palavra3: var #1 	;armazena a terceira palavra sorteada
 Palavra4: var #1 	;armazena a quarta palavra sorteada
-PalavraCmp: var #6 	;armazena uma cópia da palavra sorteada para a comparação
-PalavraCp: var #6 	;armazena uma cópia da palavra digitada para a comparação
-PalavraCp1: var #6 	;
-PalavraCp2: var #6 	;
-PalavraCp3: var #6 	;
-PalavraCp4: var #6 	;
+Acertos1: var #1 	;armazena a quantidade de letras na posição certa na palavra 1 
+Acertos2: var #1 	;armazena a quantidade de letras na posição certa na palavra 2 
+Acertos3: var #1 	;armazena a quantidade de letras na posição certa na palavra 3 
+Acertos4: var #1 	;armazena a quantidade de letras na posição certa na palavra 4 
 
 ;---------Mensagens usadas no program seguidas de ses respectivos comprimentos---------
 Msgn1: string "Escolha um modo para jogar"
@@ -189,6 +189,14 @@ Msgn9: string "_____"
 Msgn10: string "Parabens!!"
 ;----------Inicio Programa Principal----------
 main:
+
+	loadn r0, #0 ;salva o valor zero no registrador 0
+
+	;inicializa as variáveis com zero
+	store Acertos1, r0	
+	store Acertos2, r0	
+	store Acertos3, r0	
+	store Acertos4, r0	
 
 	Call DesenhaTelaInicial	;imprime as mensagens inicais na tela
 	Call InputModo		    ;recebe o modo de jogo e desencadeia a geração de um número pseudo aleatório
