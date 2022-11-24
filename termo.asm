@@ -995,31 +995,51 @@ Quarteto:
 	loadn r1, #359 ;carrega a posição na qual deve se iniciar a impressão
 	loadn r6, #49  ;fator para pular duas linhas
 	loadn r7, #9   ;numero de tentativas
-	loadn r2, #4 ;espaçamento das margens
+	loadn r5, #4 ;espaçamento das margens
 	loadn r4, #9 ;espaço entre as palavras impressas
 	
 	Quarteto_Loop:
 	
-		add r1, r1, r2
+		add r1, r1, r5
 		Call InputPalavra ;lê a palavra
-		loadn r0, #Palavra
-		load r3, Palavra1	;ponteiro para a palavra a ser comparada
-		Call Compara
+		loadn r3, #Palavra		;
+		loadn r2, #PalavraCp	;
+		call CopiaPalavra 		;
+		load r3, Palavra1		;ponteiro para a palavra a ser comparada
+		loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
+		Call CopiaPalavra 		;chamada da subrotina que faz uma cópia da palavra cujo ponteiro está guardado em r2 para que possa ser alterada durante a comparação
+		Call Compara 	   		;compara a palavra digitada com a sorteada e ajusta as cores
+		loadn r0, #PalavraCp 	;salva em r0 o ponteiro para a variável Palavra, que guarda a palavra digitada
 		Call ImprimePalavra ;imprime a palavra com as letras coloridas
 		add r1, r1, r4
-		loadn r0, #Palavra
-		load r3, Palavra2	;ponteiro para a palavra a ser comparada
-		Call Compara
-		Call ImprimePalavra ;imprime a palavra com as colorida
-		add r1, r1, r4
-		loadn r0, #Palavra
-		load r3, Palavra1	;ponteiro para a palavra a ser comparada
-		Call Compara
+		loadn r3, #Palavra		;
+		loadn r2, #PalavraCp	;
+		call CopiaPalavra 		;
+		load r3, Palavra2		;ponteiro para a palavra a ser comparada
+		loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
+		Call CopiaPalavra 		;chamada da subrotina que faz uma cópia da palavra cujo ponteiro está guardado em r2 para que possa ser alterada durante a comparação
+		Call Compara 	   		;compara a palavra digitada com a sorteada e ajusta as cores
+		loadn r0, #PalavraCp 	;salva em r0 o ponteiro para a variável Palavra, que guarda a palavra digitada
 		Call ImprimePalavra ;imprime a palavra com as letras coloridas
 		add r1, r1, r4
-		loadn r0, #Palavra
-		load r3, Palavra1	;ponteiro para a palavra a ser comparada
-		Call Compara
+		loadn r3, #Palavra		;
+		loadn r2, #PalavraCp	;
+		call CopiaPalavra 		;
+		load r3, Palavra3		;ponteiro para a palavra a ser comparada
+		loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
+		Call CopiaPalavra 		;chamada da subrotina que faz uma cópia da palavra cujo ponteiro está guardado em r2 para que possa ser alterada durante a comparação
+		Call Compara 	   		;compara a palavra digitada com a sorteada e ajusta as cores
+		loadn r0, #PalavraCp 	;salva em r0 o ponteiro para a variável Palavra, que guarda a palavra digitada
+		Call ImprimePalavra ;imprime a palavra com as letras coloridas
+		add r1, r1, r4
+		loadn r3, #Palavra		;
+		loadn r2, #PalavraCp	;
+		call CopiaPalavra 		;
+		load r3, Palavra4		;ponteiro para a palavra a ser comparada
+		loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
+		Call CopiaPalavra 		;chamada da subrotina que faz uma cópia da palavra cujo ponteiro está guardado em r2 para que possa ser alterada durante a comparação
+		Call Compara 	   		;compara a palavra digitada com a sorteada e ajusta as cores
+		loadn r0, #PalavraCp 	;salva em r0 o ponteiro para a variável Palavra, que guarda a palavra digitada
 		Call ImprimePalavra ;imprime a palavra com as letras coloridas
 		add r1, r1, r6	  ;seta a posição para imprimir a nova mensagem duas linhas abaixo
 		dec r7;
