@@ -190,14 +190,6 @@ Msgn10: string "Parabens!!"
 ;----------Inicio Programa Principal----------
 main:
 
-	loadn r0, #0 ;salva o valor zero no registrador 0
-
-	;inicializa as variáveis com zero
-	store Acertos1, r0	
-	store Acertos2, r0	
-	store Acertos3, r0	
-	store Acertos4, r0	
-
 	Call DesenhaTelaInicial	;imprime as mensagens inicais na tela
 	Call InputModo		    ;recebe o modo de jogo e desencadeia a geração de um número pseudo aleatório
 
@@ -572,18 +564,20 @@ Termo:
 	push r4
 	push r5
 	push r6
-	push r7
-	
+	push r7	
+
 	Call DesenhaTelaTermo
 	Call SortearPalavra
 
-	loadn r0, #PalavraCp
 	loadn r1, #376 ;carrega a posição na qual deve se iniciar a impressão
+	loadn r5, #5   ;o valor 5 será usado para comparação com os acertos
 	loadn r6, #80  ;fator para pular duas linhas
 	loadn r7, #6   ;numero de tentativas
 
 	Termo_Loop:
-	
+
+		loadn r0, #0
+		store Acertos1, r0	
 		add r1, r1, r6	  		;pula duas linhas para escrever a próxima palavra
 		Call InputPalavra 		;lê a palavra
 		loadn r3, #Palavra		;
@@ -591,11 +585,18 @@ Termo:
 		call CopiaPalavra 		;
 		load r3, Palavra1		;ponteiro para a palavra a ser comparada
 		loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
+		loadn r0, #Acertos1
 		Call CopiaPalavra 		;chamada da subrotina que faz uma cópia da palavra cujo ponteiro está guardado em r2 para que possa ser alterada durante a comparação
 		Call Compara 	   		;compara a palavra digitada com a sorteada e ajusta as cores
+		loadn r0, #PalavraCp 	;armazena o ponteiro da palavra a ser impressa
 		Call ImprimePalavra 	;imprime a palavra com as colorida
+		load r0, Acertos1		;lê a quantidade de acertos
+		cmp r0, r5				;verifica se o jogador acertou a palavra
+		jeq Termo_Fim			;vitória do jogador
 		dec r7;					;diminui uma iteração
 		jnz Termo_Loop 			;continua no loop até se encerrarem as tentativas
+
+	Termo_Fim:
 
 	pop r7
 	pop r6
@@ -664,23 +665,14 @@ Compara:
 	push r0
 	push r1
 	push r2
-	push r3
-	push r4
-	push r5
-	push r6
-	push r7
 
+	breakp
 	loadn r2, #PalavraCmp
 	loadn r1, #PalavraCp	    ;carrega para r1 o endereço contido da variável Palavra para que ele sirva de ponteiro para a palavra digitada pelo usuário
 	Call VerificaVerde 		;verifica quais letras estão na posição certa
 	loadn r1, #PalavraCp	    ;carrega para r0 o endereço contido da variável Palavra para que ele sirva de ponteiro para a palavra digitada pelo usuário
 	Call VerificaAmarelo 	;verifica quais as letras pertencem à palavra mas estão na posição errada
 
-	pop r7
-	pop r6
-	pop r5
-	pop r4
-	pop r3
 	pop r2
 	pop r1
 	pop r0
@@ -703,18 +695,22 @@ VerificaVerde:
 
 	loadn r4, #5  			;iterador
 	loadn r5, #5  			;iterador
+	;loadn r6, #4 			;diferença entre o endereço da variável Palavrax e Acertosx
+	loadi r7, r0  			;salva em r7 o número de acertos
 
 	VerificaVerde_Loop:
 
 		loadi r3, r1			;salva em r1 o conteúdo do endereço de memória para o qual r1 aponta
-		loadi r0, r2			;salva em r2 o conteúdo do endereço de memória para o qual r0 aponta
-		cmp r0, r3				;verifica se as letras são iguais
+		loadi r6, r2			;salva em r2 o conteúdo do endereço de memória para o qual r0 aponta
+		cmp r6, r3				;verifica se as letras são iguais
 		ceq SetaCorLetra    	;altera a cor da letra
-		inc r2					;avança o ponteiro de "Palavra1"
+		inc r2					;avança o ponteiro de "Palavrax"
 		inc r1					;avança o ponteiro de "Palavra"
 		dec r5					;diminui uma iteração
 		dec r4					;diminui uma iteração
 		jnz VerificaVerde_Loop		;verifica se o loop chegou ao fim
+
+	storei r0, r7	;salva na variével Acertosx a quantidade de acertos
 
 	pop r7
 	pop r6
@@ -829,7 +825,8 @@ SetaCorLetra:
 
 	cmp r4, r5
 	jne SetaCorLetra_Amarelo
-	loadn r2, #3072 ;troquei temporariamente o verde por azul#512 	;código da cor verde	
+	loadn r2, #3072 ;troquei temporariamente o verde por azul#512 	;código da cor verde
+	inc r7 			;incrementa o número de acertos	
 	jmp SetaCorLetra_Fim
 
 	SetaCorLetra_Amarelo:
@@ -864,7 +861,7 @@ Dueto:
 	push r4
 	push r5
 	push r6
-	push r7
+	push r7	
 	
 	Call DesenhaTelaDueto
 	Call SortearPalavra
@@ -877,6 +874,9 @@ Dueto:
 
 	Dueto_Loop:
 	
+		loadn r0, #0
+		store Acertos1, r0	
+		store Acertos2, r0
 		add r1, r1, r5
 		Call InputPalavra ;lê a palavra
 		loadn r3, #Palavra		;
@@ -1007,7 +1007,12 @@ Quarteto:
 	loadn r4, #9 ;espaço entre as palavras impressas
 	
 	Quarteto_Loop:
-	
+
+		loadn r0, #0
+		store Acertos1, r0	
+		store Acertos2, r0
+		store Acertos3, r0	
+		store Acertos4, r0
 		add r1, r1, r5
 		Call InputPalavra ;lê a palavra
 		loadn r3, #Palavra		;
