@@ -190,6 +190,7 @@ Msgn8: string "_____"
 Msgn9: string "You Win!"
 Msgn10: string "Game Over!"
 Msgn11: string "Deseja jogar Novamente? (s/n)"
+Msgn12: string "Ativar modo daltonico? (s/n)"
 ;----------Inicio Programa Principal----------
 main:
 
@@ -199,6 +200,8 @@ main:
 	store Acertos2, r0
 	store Acertos3, r0
 	store Acertos4, r0
+
+	Call ModoDaltonico
 
 	Call DesenhaTelaInicial	;imprime as mensagens inicais na tela
 	Call InputModo		    ;recebe o modo de jogo e desencadeia a geração de um número pseudo aleatório
@@ -558,6 +561,46 @@ ImprimeLetraDueto:
 
 	rts
 ;-----------------------------------------------
+
+ModoDaltonico:
+
+	push fr
+	push r0
+	push r1
+	push r2
+
+	Call ApagaTela 		;caso o jogador digite 'n' apenas apaga a tela e apusa a execução
+	loadn r1, #445  	;carrega a posição na qual deve se iniciar a impressão
+	loadn r0, #Msgn12 	;carrega a mensagem a ser impressa
+	Call ImprimePalavra ;imprime a mensagem
+
+	Call InputLetra 	;lê a resposta do jogador (s/n)
+
+	load r0, Letra 		;carrega para o registrador a letra digitada pelo usuário
+	loadn r1, #'s' 		;salva em r1 o caractere 'S'
+	cmp r0, r1			;verifica se o usuário digitou 's'
+	jeq ModoDaltonico_Azul 
+	jne ModoDaltonico_Verde
+
+	ModoDaltonico_Azul:
+
+		loadn r0, #3072 ;carrega o código da cor azul
+		store Cor, r0 	;salva na variável o código da cor
+		jmp ModoDaltonico_Fim
+
+	ModoDaltonico_Verde:
+
+		loadn r0, #512 ;carrega o código da cor verde
+		store Cor, r0 	;salva na variável o código da cor
+
+	ModoDaltonico_Fim:
+
+	pop r2
+	pop r1
+	pop r0
+	pop fr
+
+	rts
 
 ;-----------------------------------------------
 ; 			  Imprime Letra Quarteto			| 
@@ -934,7 +977,7 @@ SetaCorLetra:
 
 	cmp r4, r5
 	jne SetaCorLetra_Amarelo
-	loadn r0, #3072 ;troquei temporariamente o verde por azul#512 	;código da cor verde
+	load r0, Cor 	;carrega a cor usada para indicar o acerto
 	inc r7 			;incrementa o número de acertos	
 	jmp SetaCorLetra_Fim
 
