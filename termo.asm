@@ -51,7 +51,7 @@
 ;================================================
 ;DesenhaTelaTermo:
 ;
-; Call ApagaTelaInicial
+; Call ApagaTela
 ; ImprimePalavra("TERMO")
 ; Call ImprimePalavra("_____")(x1)(x6)
 ;
@@ -73,7 +73,7 @@
 ;================================================
 ;DesenhaTelaDueto:
 ;
-; Call ApagaTelaInicial
+; Call ApagaTela
 ; ImprimePalavra("DUETO")
 ; Call ImprimePalavra("_____")(x2)(x7)
 ;
@@ -95,17 +95,17 @@
 ;================================================
 ;DesenhaTelaQuarteto:
 ;
-; Call ApagaTelaInicial
+; Call ApagaTela
 ; ImprimePalavra("QUARTETO")
 ; Call ImprimePalavra("_____")(x4)(x9)
 ;
 ;/DesenhaTelaQuarteto
 ;================================================
-;ApagaTelaInicial:
+;ApagaTela:
 ;
-; [coloca caracteres em branco sobre o que foi escrito na tela inicial]
+; [imprime espaços sobre toda a tela]
 ;
-;/ApagaTelaInicial
+;/ApagaTela
 ;================================================
 ;InputPalavra:
 ;
@@ -161,6 +161,7 @@ string "vital"
 ;[OBSERVAÇÃO: Ao acrescentar palavras, mudar o valor de r4 na subrotina "SortearPalavra"]
 
 ;---------Declaração das variáveis globais---------
+iterador: var #1  	;armazena o conteúdo do iterador após o fim do jogo para verificar se o jogador ganhou ou não
 Letra: var #1  		;armazena uma letra
 Modo: var #1 		;armazena o modo de jogo (1 - Termo, 2 - Dueto ou 3 - Quarteto)
 Palavra: var #6 	;armazena a palavra digitada
@@ -186,7 +187,9 @@ Msgn6: string "T E R M O"
 Msgn7: string "D U E T O"
 Msgn8: string "Q U A R T E T O"
 Msgn9: string "_____"
-Msgn10: string "Parabens!!"
+Msgn10: string "You Win!"
+Msgn11: string "Game Over!"
+Msgn12: string "Deseja jogar Novamente? (S/n)"
 ;----------Inicio Programa Principal----------
 main:
 
@@ -217,6 +220,8 @@ main:
 	inc r1					;carrega para r1 o código ASCII do caracter '3'
 	cmp r1, r0				;compara o conteúdo dos registradores
 	ceq Quarteto			;chama a subrotina "Quarteto" caso "Letra" corresponda a '3'
+
+	Call Tela_Final
 
 	halt
 
@@ -264,23 +269,22 @@ DesenhaTelaInicial:
 ;-----------------------------------------
 ; Descrição: Apaga o menu inicial do jogo |
 ;-----------------------------------------	
-ApagaTelaInicial:
+ApagaTela:
 	
 
 	push fr
 	push r0
 	push r1
 
-	loadn r0, #Msgn5 ;carrega para r0 o endereço da mensagem "     " que será usada para sobrescrever e apagar as mensagens escritas
-	loadn r1, #46 ; carrega a posição onde se inica a primeira mensagen a ser apagada
-	Call ImprimePalavra ;apaga Mensagem 1
-	loadn r1, #175 ; carrega a posição onde se inica a segunda mensagen a ser apagada
-	Call ImprimePalavra ;apaga Mensagem 2
-	loadn r1, #255 ; carrega a posição onde se inica a terceira mensagen a ser apagada
-	Call ImprimePalavra ;apaga Mensagem 3
-	loadn r1, #335 ; carrega a posição onde se inica a quarta mensagen a ser apagada
-	Call ImprimePalavra ;apaga Mensagem 4
-	
+	loadn r0, #' ' 
+	loadn r1, #1199
+
+	ApagaTela_Loop:
+
+		outchar r0, r1
+		dec r1
+		jnz ApagaTela_Loop
+
 	pop r1
 	pop r0
 	pop fr
@@ -649,6 +653,8 @@ Termo:
 
 	Termo_Fim:
 
+		store iterador, r7 	;salva na variável r7 a quantidade de tentativas restantes
+
 	pop r7
 	pop r6
 	pop r5
@@ -661,6 +667,41 @@ Termo:
 
 	rts
 ;-----------------------------------------------
+
+Tela_Final:
+
+	push fr
+	push r0
+	push r1
+
+	Call ApagaTela
+
+	loadn r0, #0   				;carrega zero para o r0 para comparar com o conteúdo da variável "iterador"
+	load r7, iterador 			;carrega para r7 o conteúdo da variável
+	cmp r0, r7 	   				;verifica se as tentativas se esgotaram - indicativo de que o jogador perdeu
+	jeq Tela_Final_Game_Over	;em caso afirmativo, seta  a mensagem "Game over"
+	jne Tela_Final_You_Win 		;caso contrário, seta  amensagem "You Win"
+
+	Tela_Final_Game_Over:
+
+		loadn r1, #215 ;carrega a posição na qual deve se iniciar a impressão
+		loadn r0, #Msgn11 ;carrega a mensagem a ser impressa
+		jmp Tela_Final_Fim
+
+	Tela_Final_You_Win:
+
+		loadn r1, #216 ;carrega a posição na qual deve se iniciar a impressão
+		loadn r0, #Msgn10 ;carrega a mensagem a ser impressa
+
+	Tela_Final_Fim:
+
+		Call ImprimePalavra ;impreme a mensagem
+
+	pop r1
+	pop r0
+	pop fr
+
+	rts
 
 ;---------------------------------------------------
 ; 			 	 Desenha Tela Termo 		  		|
@@ -676,7 +717,7 @@ DesenhaTelaTermo:
 	push r3
 	push r4
 	
-	Call ApagaTelaInicial
+	Call ApagaTela
 	loadn r0, #Msgn6 ;carrega para r0 o endereço no qual começa a sexta mensagem ("TERMO")
 	loadn r1, #54 ; carrega a posição na qual deve se iniciar a impressão
 	Call ImprimePalavra ;imprime a mensagem 
@@ -979,6 +1020,8 @@ Dueto:
 
 	Dueto_Fim:
 
+		store iterador, r7 	;salva na variável r7 a quantidade de tentativas restantes
+
 	pop r7
 	pop r6
 	pop r5
@@ -1008,7 +1051,7 @@ DesenhaTelaDueto:
 	push r5
 	push r6
 	
-	Call ApagaTelaInicial
+	Call ApagaTela
 	loadn r0, #Msgn7 ;carrega para r0 o endereço no qual começa a sexta mensagem ("DUETO")
 	loadn r1, #54 ; carrega a posição na qual deve se iniciar a impressão
 	Call ImprimePalavra ;imprime a mensagem 
@@ -1164,6 +1207,8 @@ Quarteto:
 
 	Quarteto_Fim:
 
+		store iterador, r7 	;salva na variável r7 a quantidade de tentativas restantes
+
 	pop r7
 	pop r6
 	pop r5
@@ -1194,7 +1239,7 @@ DesenhaTelaQuarteto:
 	push r5
 	push r6
 	
-	Call ApagaTelaInicial
+	Call ApagaTela
 	loadn r0, #Msgn8 ;carrega para r0 o endereço no qual começa a sexta mensagem ("DUETO")
 	loadn r1, #54 ; carrega a posição na qual deve se iniciar a impressão
 	Call ImprimePalavra ;imprime a mensagem 
