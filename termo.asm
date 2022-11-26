@@ -201,6 +201,9 @@ main:
 	store Acertos3, r0
 	store Acertos4, r0
 
+	loadn r0, #512  ;carrega o código da cor verde
+	store Cor, r0 	;salva na variável o código da cor
+
 	Call ModoDaltonico
 
 	Call DesenhaTelaInicial	;imprime as mensagens inicais na tela
@@ -322,7 +325,7 @@ ImprimePalavra:
 	push r2
 	push r3
 
-	loadn r2, #'\0'
+	loadn r2, #'\0' 	;carrega o caractere de fim da string para r2
 
 	ImprimePalavra_Loop:
 
@@ -481,12 +484,12 @@ ImprimeLetra:
 	;Case('2')
 	inc r3					;carrega para r3 o código ASCII do caracter '2'
 	cmp r3, r1				;compara o conteúdo dos registradores
-	ceq ImprimeLetraDueto				;chama a subrotina "ImprimeLetraDueto" caso "Modo" corresponda a '2'
+	ceq ImprimeLetraDueto	;chama a subrotina "ImprimeLetraDueto" caso "Modo" corresponda a '2'
 
 	;Case('3')
 	inc r3					;carrega para r3 o código ASCII do caracter '3'
 	cmp r3, r1				;compara o conteúdo dos registradores
-	ceq ImprimeLetraQuarteto			;chama a subrotina "ImprimeLetraQuarteto" caso "Modo" corresponda a '3'
+	ceq ImprimeLetraQuarteto;chama a subrotina "ImprimeLetraQuarteto" caso "Modo" corresponda a '3'
 
 	pop r3
 	pop r2
@@ -562,6 +565,13 @@ ImprimeLetraDueto:
 	rts
 ;-----------------------------------------------
 
+;-----------------------------------------------------------------
+; 			 	 		  Modo Daltônico	   					  |
+;-----------------------------------------------------------------
+; Descrição: Pergunta ao usuário se deseja ativar o modo daltônico|
+;            que consiste em trocar a cor verde pela cor azul na  |
+;			 hora de indicar as letras na posição correta		  |
+;-----------------------------------------------------------------
 ModoDaltonico:
 
 	push fr
@@ -580,18 +590,12 @@ ModoDaltonico:
 	loadn r1, #'s' 		;salva em r1 o caractere 'S'
 	cmp r0, r1			;verifica se o usuário digitou 's'
 	jeq ModoDaltonico_Azul 
-	jne ModoDaltonico_Verde
+	jne ModoDaltonico_Fim
 
 	ModoDaltonico_Azul:
 
 		loadn r0, #3072 ;carrega o código da cor azul
-		store Cor, r0 	;salva na variável o código da cor
-		jmp ModoDaltonico_Fim
-
-	ModoDaltonico_Verde:
-
-		loadn r0, #512 ;carrega o código da cor verde
-		store Cor, r0 	;salva na variável o código da cor
+		store Cor, r0 	;salva na variável o código da cor		
 
 	ModoDaltonico_Fim:
 
@@ -619,35 +623,35 @@ ImprimeLetraQuarteto:
 
 	loadn r1, #9 ;espaço entre as palavras impressas somado ao tamanho das mensagens
 
-	load r3, Acertos1		;lê a quantidade de acertos da primeira palavra
-	loadn r4, #5
-	cmp r3, r4
+	load r3, Acertos1	;lê a quantidade de acertos da primeira palavra
+	loadn r4, #5 		;carrega para o registrador o valor de referência	
+	cmp r3, r4 			;verifica se o jogador já acertou a palavra, pois em caso afirmativo não imprime mais o caractere
 	jeq ImprimeLetraQuarteto_Palavra2
-	outchar r2, r0 ;imprime o caractere de r2 na posição de r0
+	outchar r2, r0 		;imprime o caractere de r2 na posição de r0
 
 	ImprimeLetraQuarteto_Palavra2:
 	add r0, r0, r1 ;seta a posição para imprimir a nova mensagem com 4 pixels de distancia da anterior
-	load r3, Acertos2		;lê a quantidade de acertos da primeira palavra
-	loadn r4, #5
-	cmp r3, r4
+	load r3, Acertos2	;lê a quantidade de acertos da primeira palavra
+	loadn r4, #5 		;carrega para o registrador o valor de referência
+	cmp r3, r4 			;verifica se o jogador já acertou a palavra, pois em caso afirmativo não imprime mais o caractere
 	jeq ImprimeLetraQuarteto_Palavra3
-	outchar r2, r0 ;imprime o caractere de r2 na posição de r0
+	outchar r2, r0 		;imprime o caractere de r2 na posição de r0
 
 	ImprimeLetraQuarteto_Palavra3:
 	add r0, r0, r1 ;seta a posição para imprimir a nova mensagem com 4 pixels de distancia da anterior
-	load r3, Acertos3		;lê a quantidade de acertos da primeira palavra
-	loadn r4, #5
-	cmp r3, r4
+	load r3, Acertos3	;lê a quantidade de acertos da primeira palavra
+	loadn r4, #5 		;carrega para o registrador o valor de referência
+	cmp r3, r4 			;verifica se o jogador já acertou a palavra, pois em caso afirmativo não imprime mais o caractere
 	jeq ImprimeLetraQuarteto_Palavra4
-	outchar r2, r0 ;imprime o caractere de r2 na posição de r0
+	outchar r2, r0 		;imprime o caractere de r2 na posição de r0
 
 	ImprimeLetraQuarteto_Palavra4:
 	add r0, r0, r1 ;seta a posição para imprimir a nova mensagem com 4 pixels de distancia da anterior
-	load r3, Acertos4		;lê a quantidade de acertos da primeira palavra
-	loadn r4, #5
-	cmp r3, r4
+	load r3, Acertos4	;lê a quantidade de acertos da primeira palavra
+	loadn r4, #5 		;carrega para o registrador o valor de referência
+	cmp r3, r4			;verifica se o jogador já acertou a palavra, pois em caso afirmativo não imprime mais o caractere
 	jeq ImprimeLetraQuarteto_Fim
-	outchar r2, r0 ;imprime o caractere de r2 na posição de r0
+	outchar r2, r0 		;imprime o caractere de r2 na posição de r0
 
 	ImprimeLetraQuarteto_Fim:
 
@@ -692,20 +696,20 @@ Termo:
 		store Acertos1, r0	
 		add r1, r1, r6	  		;pula duas linhas para escrever a próxima palavra
 		Call InputPalavra 		;lê a palavra
-		loadn r3, #Palavra		;
-		loadn r2, #PalavraCp	;
-		call CopiaPalavra 		;
+		loadn r3, #Palavra		;carrega para r3 o endereço da palavra digitada para que ele sirva de ponteiro
+		loadn r2, #PalavraCp	;salva em r0 o ponteiro para a variável Palavra, que guarda a palavra digitada
+		call CopiaPalavra 		;copia a palavra digitada
 		load r3, Palavra1		;ponteiro para a palavra a ser comparada
 		loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
-		loadn r0, #Acertos1
+		loadn r0, #Acertos1 	;carrega para r0 a  o endereço da variável que guarda os acertos concernentes à primeira palavra
 		Call CopiaPalavra 		;chamada da subrotina que faz uma cópia da palavra cujo ponteiro está guardado em r2 para que possa ser alterada durante a comparação
 		Call Compara 	   		;compara a palavra digitada com a sorteada e ajusta as cores
 		loadn r0, #PalavraCp 	;armazena o ponteiro da palavra a ser impressa
 		Call ImprimePalavra 	;imprime a palavra com as colorida
-		dec r7;					;diminui uma iteração
+		dec r7;					;-1 tentativa
 		load r0, Acertos1		;lê a quantidade de acertos
 		cmp r0, r5				;verifica se o jogador acertou a palavra
-		jeq Termo_Fim			;vitória do jogador
+		jeq Termo_Fim			;fim de jogo
 		jnz Termo_Loop 			;continua no loop até se encerrarem as tentativas
 
 	Termo_Fim:
@@ -725,6 +729,12 @@ Termo:
 	rts
 ;-----------------------------------------------
 
+;---------------------------------------------------
+; 			  		  Tela Final					| 
+;---------------------------------------------------
+; Descrição: Imprime a mensagem de vitória/derrota  |
+;            e pergunta se ele deseja jogar de novo	|
+;---------------------------------------------------
 Tela_Final:
 
 	push fr
@@ -760,6 +770,7 @@ Tela_Final:
 	pop fr
 
 	rts
+;---------------------------------------------------
 
 ;---------------------------------------------------
 ; 			 	 Desenha Tela Termo 		  		|
@@ -830,6 +841,12 @@ Compara:
 	rts
 ;------------------------------------------------------------
 
+;------------------------------------------------------------
+; 			 	 		Verifica Verde	   					 |
+;------------------------------------------------------------
+; Descrição: Verifica quais as letras estão na posição certa,|
+;            altera sua cor e atualiza o número de acertos   |
+;------------------------------------------------------------
 VerificaVerde:
 
 	push fr
@@ -871,7 +888,14 @@ VerificaVerde:
 	pop fr
 
 	rts
+;------------------------------------------------------------
 
+;------------------------------------------------------------
+; 			 	 	  Verifica Amarelo   					 |
+;------------------------------------------------------------
+; Descrição: Verifica quais as letras pertencem à palavra e  |
+;            foram digitadas pelo jogador, alterando sua cor |
+;------------------------------------------------------------
 VerificaAmarelo:
 
 	push fr
@@ -919,6 +943,7 @@ VerificaAmarelo:
 	pop fr
 
 	rts
+;------------------------------------------------------------
 
 ;--------------------------------------------------
 ; 			 	 	Copia Palavra		  		   |
@@ -965,12 +990,6 @@ SetaCorLetra:
 	push r1
 	push r2
 	push r3
-
-	;
-	;troquei r0 por r2 e vice versa nessa subrotina
-	;isso arrumou a comparação mas estragou a impressão 
-	;de algumas mensagens
-	;
 
 	loadn r0, #'-'	;carrega o valor '-' para r2
 	storei r2, r0	;coloca '-' no lugar da letra
@@ -1026,53 +1045,53 @@ Dueto:
 
 	Dueto_Loop:
 	
-		add r1, r1, r5
-		Call InputPalavra ;lê a palavra
+		add r1, r1, r5 			;posiciona o cursor para a impressão da primeira palavra
+		Call InputPalavra 		;lê a palavra
 		load r0, Acertos1		;lê a quantidade de acertos da primeira palavra
-		loadn r5, #5
-		cmp r0, r5
-		jeq Dueto_Loop_Palavra2
-		loadn r0, #0
-		store Acertos1, r0	
-		loadn r3, #Palavra		;
-		loadn r2, #PalavraCp	;
-		loadn r0, #Acertos1
-		call CopiaPalavra 		;
+		loadn r5, #5 			;carrega o valor de referência para r0
+		cmp r0, r5 				;verifica se o jogadaor já acertou a primeira palavra
+		jeq Dueto_Loop_Palavra2 ;caso tenha acertado, não compara nem imprime a palavra mais
+		loadn r0, #0 			;carrega zero para r0
+		store Acertos1, r0	 	;zera a quantidade de acertos antes de iniciar uma nova comparação
+		loadn r3, #Palavra		;carrega para r3 o endereço da palavra digitada para que ele sirva de ponteiro
+		loadn r2, #PalavraCp	;carrega para r2 o endereço da da variável que receberá uma cópia da palavra digitada para que ele sirva de ponteiro
+		call CopiaPalavra 		;copia a palavra digitada
+		loadn r0, #Acertos1 	;carrega para r0 a  o endereço da variável que guarda os acertos concernentes à primeira palavra
 		load r3, Palavra1		;ponteiro para a palavra a ser comparada
 		loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
 		Call CopiaPalavra 		;chamada da subrotina que faz uma cópia da palavra cujo ponteiro está guardado em r2 para que possa ser alterada durante a comparação
 		Call Compara 	   		;compara a palavra digitada com a sorteada e ajusta as cores
 		loadn r0, #PalavraCp 	;salva em r0 o ponteiro para a variável Palavra, que guarda a palavra digitada
-		Call ImprimePalavra ;imprime a palavra com as letras coloridas
+		Call ImprimePalavra 	;imprime a palavra com as letras coloridas
 
 		Dueto_Loop_Palavra2:
-		add r1, r1, r4
+		add r1, r1, r4 			;posiciona o cursor para imprimir a próxima palavra
 		load r0, Acertos2		;lê a quantidade de acertos da primeira palavra
-		loadn r5, #5
-		cmp r0, r5
-		jeq Dueto_Loop_Fim
-		loadn r0, #0
-		store Acertos2, r0	
-		loadn r3, #Palavra		;
-		loadn r2, #PalavraCp	;
-		loadn r0, #Acertos2
-		call CopiaPalavra 		;
+		loadn r5, #5 			;carrega o valor de referência para r0
+		cmp r0, r5 				;verifica se o jogadaor já acertou a segunda palavra
+		jeq Dueto_Loop_Fim 		;caso tenha acertado, não compara nem imprime a palavra mais
+		loadn r0, #0 			;carrega zero para r0
+		store Acertos2, r0		;zera a quantidade de acertos antes de iniciar uma nova comparação
+		loadn r3, #Palavra		;carrega para r3 o endereço da palavra digitada para que ele sirva de ponteiro
+		loadn r2, #PalavraCp	;carrega para r2 o endereço da da variável que receberá uma cópia da palavra digitada para que ele sirva de ponteiro
+		call CopiaPalavra 		;copia a palavra digitada 
+		loadn r0, #Acertos2 	;carrega para r0 o endereço da variável que guarda os acertos concernentes à segunda palavra
 		load r3, Palavra2		;ponteiro para a palavra a ser comparada
 		loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
 		Call CopiaPalavra 		;chamada da subrotina que faz uma cópia da palavra cujo ponteiro está guardado em r2 para que possa ser alterada durante a comparação
 		Call Compara 	   		;compara a palavra digitada com a sorteada e ajusta as cores
 		loadn r0, #PalavraCp 	;salva em r0 o ponteiro para a variável Palavra, que guarda a palavra digitada
-		Call ImprimePalavra ;imprime a palavra com as colorida
+		Call ImprimePalavra 	;imprime a palavra com as colorida
 
 		Dueto_Loop_Fim:
 		add r1, r1, r6	  ;seta a posição para imprimir a nova mensagem duas linhas abaixo
-		load r0, Acertos1		;lê a quantidade de acertos da primeira palavra
-		load r5, Acertos2		;lê a quantidade de acertos da segunda palavra		
-		add r0, r0, r5			;soma a quantidade de acertos
-		loadn r5, #10  			;se as dez letras estiverem no lugar certo, o jogo acaba
-		cmp r0, r5				;verifica se o jogador acertou a palavra
-		jeq Dueto_Fim			;vitória do jogador
-		dec r7;
+		load r0, Acertos1 ;lê a quantidade de acertos da primeira palavra
+		load r5, Acertos2 ;lê a quantidade de acertos da segunda palavra		
+		add r0, r0, r5	  ;soma a quantidade de acertos
+		loadn r5, #10  	  ;se as dez letras estiverem no lugar certo, o jogo acaba
+		cmp r0, r5		  ;verifica se o jogador acertou a palavra
+		jeq Dueto_Fim	  ;fim de jogo
+		dec r7 			  ;-1 tentativa
 		jnz Dueto_Loop
 	
 
@@ -1167,89 +1186,89 @@ Quarteto:
 	loadn r1, #359 ;carrega a posição na qual deve se iniciar a impressão
 	loadn r6, #49  ;fator para pular duas linhas
 	loadn r7, #9   ;numero de tentativas
-	loadn r4, #9 ;espaço entre as palavras impressas
+	loadn r4, #9 	;espaço entre as palavras impressas
 	
 	Quarteto_Loop:
 
-		loadn r5, #4 ;espaçamento das margens
-		add r1, r1, r5
+		loadn r5, #4 			;espaçamento das margens
+		add r1, r1, r5 			;posiciona o cursor antes da impressão
 		Call InputPalavra 		;lê a palavra
 		load r0, Acertos1		;lê a quantidade de acertos da primeira palavra
-		loadn r5, #5
-		cmp r0, r5
-		jeq Quarteto_Loop_Palavra2
-		loadn r0, #0
-		store Acertos1, r0	
-		loadn r3, #Palavra		;
-		loadn r2, #PalavraCp	;
-		loadn r0, #Acertos1
-		call CopiaPalavra 		;
+		loadn r5, #5 			;carrega o valor de referência para r0
+		cmp r0, r5 				;verifica se o jogadaor já acertou a segunda palavra
+		jeq Quarteto_Loop_Palavra2 ;caso tenha acertado, não compara nem imprime a palavra mais
+		loadn r0, #0 			;carrega zero para r0
+		store Acertos1, r0		;zera a quantidade de acertos antes de iniciar uma nova comparação
+		loadn r3, #Palavra		;carrega para r3 o endereço da palavra digitada para que ele sirva de ponteiro
+		loadn r2, #PalavraCp	;carrega para r2 o endereço da da variável que receberá uma cópia da palavra digitada para que ele sirva de ponteiro
+		call CopiaPalavra 		;copia a palavra digitada
+		loadn r0, #Acertos1 	;carrega para r0 a  o endereço da variável que guarda os acertos concernentes à primeira palavra
 		load r3, Palavra1		;ponteiro para a palavra a ser comparada
 		loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
 		Call CopiaPalavra 		;chamada da subrotina que faz uma cópia da palavra cujo ponteiro está guardado em r2 para que possa ser alterada durante a comparação
 		Call Compara 	   		;compara a palavra digitada com a sorteada e ajusta as cores
 		loadn r0, #PalavraCp 	;salva em r0 o ponteiro para a variável Palavra, que guarda a palavra digitada
-		Call ImprimePalavra ;imprime a palavra com as letras coloridas
+		Call ImprimePalavra 	;imprime a palavra com as letras coloridas
 
 		Quarteto_Loop_Palavra2:
-		add r1, r1, r4
+		add r1, r1, r4 			;posiciona o cursor antes da impressão
 		load r0, Acertos2		;lê a quantidade de acertos da primeira palavra
-		loadn r5, #5
-		cmp r0, r5
-		jeq Quarteto_Loop_Palavra3
-		loadn r0, #0
-		store Acertos2, r0	
-		loadn r3, #Palavra		;
-		loadn r2, #PalavraCp	;
-		loadn r0, #Acertos2
-		call CopiaPalavra 		;
+		loadn r5, #5 			;carrega o valor de referência para r0
+		cmp r0, r5 				;verifica se o jogador já acertou a segunda palavra
+		jeq Quarteto_Loop_Palavra3 ;caso tenha acertado, não compara nem imprime a palavra mais
+		loadn r0, #0 			;carrega zero para r0
+		store Acertos2, r0		;zera a quantidade de acertos antes de iniciar uma nova comparação
+		loadn r3, #Palavra		;carrega para r3 o endereço da palavra digitada para que ele sirva de ponteiro
+		loadn r2, #PalavraCp	;carrega para r2 o endereço da da variável que receberá uma cópia da palavra digitada para que ele sirva de ponteiro
+		call CopiaPalavra 		;copia a palavra digitada
+		loadn r0, #Acertos2 	;carrega para r0 a  o endereço da variável que guarda os acertos concernentes à segunda palavra
 		load r3, Palavra2		;ponteiro para a palavra a ser comparada
 		loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
 		Call CopiaPalavra 		;chamada da subrotina que faz uma cópia da palavra cujo ponteiro está guardado em r2 para que possa ser alterada durante a comparação
 		Call Compara 	   		;compara a palavra digitada com a sorteada e ajusta as cores
 		loadn r0, #PalavraCp 	;salva em r0 o ponteiro para a variável Palavra, que guarda a palavra digitada
-		Call ImprimePalavra ;imprime a palavra com as letras coloridas
+		Call ImprimePalavra 	;imprime a palavra com as letras coloridas
 
 		Quarteto_Loop_Palavra3:
-		add r1, r1, r4
+		add r1, r1, r4 			;posiciona o cursor antes da impressão
 		load r0, Acertos3		;lê a quantidade de acertos da primeira palavra
-		loadn r5, #5
-		cmp r0, r5
-		jeq Quarteto_Loop_Palavra4
-		loadn r0, #0
-		store Acertos3, r0	
-		loadn r3, #Palavra		;
-		loadn r2, #PalavraCp	;
-		loadn r0, #Acertos3
-		call CopiaPalavra 		;
+		loadn r5, #5 			;carrega o valor de referência para r0
+		cmp r0, r5 				;verifica se o jogador já acertou a segunda palavra
+		jeq Quarteto_Loop_Palavra4 ;caso tenha acertado, não compara nem imprime a palavra mais
+		loadn r0, #0 			;carrega zero para r0
+		store Acertos3, r0		;zera a quantidade de acertos antes de iniciar uma nova comparação
+		loadn r3, #Palavra		;carrega para r3 o endereço da palavra digitada para que ele sirva de ponteiro
+		loadn r2, #PalavraCp	;carrega para r2 o endereço da da variável que receberá uma cópia da palavra digitada para que ele sirva de ponteiro
+		loadn r0, #Acertos3 	;carrega para r0 a  o endereço da variável que guarda os acertos concernentes à segunda palavra
+		call CopiaPalavra 		;copia a palavra digitada
 		load r3, Palavra3		;ponteiro para a palavra a ser comparada
 		loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
 		Call CopiaPalavra 		;chamada da subrotina que faz uma cópia da palavra cujo ponteiro está guardado em r2 para que possa ser alterada durante a comparação
 		Call Compara 	   		;compara a palavra digitada com a sorteada e ajusta as cores
 		loadn r0, #PalavraCp 	;salva em r0 o ponteiro para a variável Palavra, que guarda a palavra digitada
-		Call ImprimePalavra ;imprime a palavra com as letras coloridas
+		Call ImprimePalavra 	;imprime a palavra com as letras coloridas
 
 		Quarteto_Loop_Palavra4:
-		add r1, r1, r4
+		add r1, r1, r4 			;posiciona o cursor antes da impressão
 		load r0, Acertos4		;lê a quantidade de acertos da primeira palavra
-		loadn r5, #5
-		cmp r0, r5
-		jeq Quarteto_Loop_Fim
-		loadn r0, #0
-		store Acertos4, r0	
-		loadn r3, #Palavra		;
-		loadn r2, #PalavraCp	;
-		loadn r0, #Acertos4
-		call CopiaPalavra 		;
+		loadn r5, #5 			;carrega o valor de referência para r0
+		cmp r0, r5 				;verifica se o jogador já acertou a segunda palavra
+		jeq Quarteto_Loop_Fim 	;caso tenha acertado, não compara nem imprime a palavra mais
+		loadn r0, #0 			;carrega zero para r0
+		store Acertos4, r0	 	;zera a quantidade de acertos antes de iniciar uma nova comparação
+		loadn r3, #Palavra		;carrega para r3 o endereço da palavra digitada para que ele sirva de ponteiro
+		loadn r2, #PalavraCp	;carrega para r2 o endereço da da variável que receberá uma cópia da palavra digitada para que ele sirva de ponteiro
+		loadn r0, #Acertos4 	;carrega para r0 a  o endereço da variável que guarda os acertos concernentes à segunda palavra
+		call CopiaPalavra 		;copia a palavra digitada
 		load r3, Palavra4		;ponteiro para a palavra a ser comparada
 		loadn r2, #PalavraCmp	;carrega para r2 o endereço de "PalavraCmp" para que ele sirva de ponteiro 
 		Call CopiaPalavra 		;chamada da subrotina que faz uma cópia da palavra cujo ponteiro está guardado em r2 para que possa ser alterada durante a comparação
 		Call Compara 	   		;compara a palavra digitada com a sorteada e ajusta as cores
 		loadn r0, #PalavraCp 	;salva em r0 o ponteiro para a variável Palavra, que guarda a palavra digitada
-		Call ImprimePalavra ;imprime a palavra com as letras coloridas
+		Call ImprimePalavra 	;imprime a palavra com as letras coloridas
 
 		Quarteto_Loop_Fim:
-		add r1, r1, r6	  ;seta a posição para imprimir a nova mensagem duas linhas abaixo
+		add r1, r1, r6	  		;seta a posição para imprimir a nova mensagem duas linhas abaixo
 		load r0, Acertos1		;lê a quantidade de acertos da primeira palavra
 		load r5, Acertos2		;lê a quantidade de acertos da segunda palavra		
 		add r0, r0, r5			;soma a quantidade de acertos
@@ -1259,8 +1278,8 @@ Quarteto:
 		add r0, r0, r5			;soma a quantidade de acertos
 		loadn r5, #20  			;se as dez letras estiverem no lugar certo, o jogo acaba
 		cmp r0, r5				;verifica se o jogador acertou a palavra
-		jeq Quarteto_Fim			;vitória do jogador
-		dec r7;
+		jeq Quarteto_Fim		;fim de jogo 
+		dec r7; 				;-1 tentativa
 		jnz Quarteto_Loop
 
 	Quarteto_Fim:
@@ -1359,11 +1378,11 @@ InputModo:
    		cmp r4, r3			;evita buffer overflow
    		jeq InputModo_Loop2 ;pula para o loop que decrementa
    		inc r4				;altera continuamente o valor do registrador para gerar um valor aleatório
-		inchar r0			; Le o teclado, se nada for digitado = 255
+		inchar r0			;Le o teclado, se nada for digitado = 255
 		cmp r0, r1			;compara r0 com 255
-		jeq InputModo_Loop1	; Fica lendo ate' que digite uma tecla valida
+		jeq InputModo_Loop1	;Fica lendo ate' que digite uma tecla valida
 		cmp r0, r2			;compara r0 com 0
-		jeq InputModo_Loop1	; Le novamente pois Logo que programa a FPGA o inchar vem 0
+		jeq InputModo_Loop1	;Le novamente pois Logo que programa a FPGA o inchar vem 0
 		jne InputModo_FIm	;sai da subrotina
 
    InputModo_Loop2:
@@ -1371,11 +1390,11 @@ InputModo:
    		cmp r4, r2			;evita buffer overflow
    		jeq InputModo_Loop1 ;volta ao loop que incrementa
    		dec r4				;altera continuamente o valor do registrador para gerar um valor aleatório
-		inchar r0			; Le o teclado, se nada for digitado = 255
+		inchar r0			;Le o teclado, se nada for digitado = 255
 		cmp r0, r1			;compara r0 com 255
-		jeq InputModo_Loop2	; Fica lendo ate' que digite uma tecla valida
+		jeq InputModo_Loop2	;Fica lendo ate' que digite uma tecla valida
 		cmp r0, r2			;compara r0 com 0
-		jeq InputModo_Loop2	; Le novamente pois Logo que programa a FPGA o inchar vem 0
+		jeq InputModo_Loop2	;Le novamente pois Logo que programa a FPGA o inchar vem 0
 		jne InputModo_FIm	;sai da subrotina
 
 	InputModo_FIm:
