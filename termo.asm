@@ -161,9 +161,10 @@ string "vital"
 ;[OBSERVAÇÃO: Ao acrescentar palavras, mudar o valor de r4 na subrotina "SortearPalavra"]
 
 ;---------Declaração das variáveis globais---------
-iterador: var #1  	;armazena o conteúdo do iterador após o fim do jogo para verificar se o jogador ganhou ou não
+Iterador: var #1  	;armazena o conteúdo do iterador após o fim do jogo para verificar se o jogador ganhou ou não
 Letra: var #1  		;armazena uma letra
 Modo: var #1 		;armazena o modo de jogo (1 - Termo, 2 - Dueto ou 3 - Quarteto)
+Cor: var #1 		;armazena a cor usada para indicar os acertos
 Palavra: var #6 	;armazena a palavra digitada
 PalavraCmp: var #6 	;armazena uma cópia da palavra sorteada para a comparação
 PalavraCp: var #6 	;armazena uma cópia da palavra digitada para a comparação
@@ -188,7 +189,7 @@ Msgn7: string "Q U A R T E T O"
 Msgn8: string "_____"
 Msgn9: string "You Win!"
 Msgn10: string "Game Over!"
-Msgn11: string "Deseja jogar Novamente? (S/n)"
+Msgn11: string "Deseja jogar Novamente? (s/n)"
 ;----------Inicio Programa Principal----------
 main:
 
@@ -222,6 +223,18 @@ main:
 
 	Call Tela_Final
 
+	loadn r1, #445  	;carrega a posição na qual deve se iniciar a impressão
+	loadn r0, #Msgn11 	;carrega a mensagem a ser impressa
+	Call ImprimePalavra ;imprime a mensagem
+
+	Call InputLetra 	;lê a resposta do jogador (s/n)
+
+	load r0, Letra 		;carrega para o registrador a letra digitada pelo usuário
+	loadn r1, #'s' 		;salva em r1 o caractere 'S'
+	cmp r0, r1			;verifica se o usuário digitou 's'
+	jeq main 			;recomeça o jogo em caso afirmativo
+	Call ApagaTela 		;caso o jogador digite 'n' apenas apaga a tela e apusa a execução
+
 	halt
 
 ;------------Fim Programa Principal-----------
@@ -238,6 +251,8 @@ DesenhaTelaInicial:
 	push r0
 	push r1
 	push r2
+
+	Call ApagaTela ;garante que a tela estará apagada 
 
 	loadn r0, #Msgn1 ;carrega para r0 o endereço no qual começa a primeira mensagem
 	loadn r1, #46 ; carrega a posição na qual deve se iniciar a impressão
@@ -652,7 +667,7 @@ Termo:
 
 	Termo_Fim:
 
-		store iterador, r7 	;salva na variável r7 a quantidade de tentativas restantes
+		store Iterador, r7 	;salva na variável r7 a quantidade de tentativas restantes
 
 	pop r7
 	pop r6
@@ -676,9 +691,9 @@ Tela_Final:
 
 	Call ApagaTela
 
-	loadn r0, #0   				;carrega zero para o r0 para comparar com o conteúdo da variável "iterador"
+	loadn r0, #0   				;carrega zero para o r0 para comparar com o conteúdo da variável "Iterador"
 	loadn r1, #215 ;carrega a posição na qual deve se iniciar a impressão
-	load r2, iterador 			;carrega para r2 o conteúdo da variável
+	load r2, Iterador 			;carrega para r2 o conteúdo da variável
 	cmp r0, r2 	   				;verifica se as tentativas se esgotaram - indicativo de que o jogador perdeu
 	jeq Tela_Final_Game_Over	;em caso afirmativo, seta  a mensagem "Game over"
 	jne Tela_Final_You_Win 		;caso contrário, seta  amensagem "You Win"
@@ -702,7 +717,6 @@ Tela_Final:
 	pop fr
 
 	rts
-;---------------------------------------------------
 
 ;---------------------------------------------------
 ; 			 	 Desenha Tela Termo 		  		|
@@ -1021,7 +1035,7 @@ Dueto:
 
 	Dueto_Fim:
 
-		store iterador, r7 	;salva na variável r7 a quantidade de tentativas restantes
+		store Iterador, r7 	;salva na variável r7 a quantidade de tentativas restantes
 
 	pop r7
 	pop r6
@@ -1208,7 +1222,7 @@ Quarteto:
 
 	Quarteto_Fim:
 
-		store iterador, r7 	;salva na variável r7 a quantidade de tentativas restantes
+		store Iterador, r7 	;salva na variável r7 a quantidade de tentativas restantes
 
 	pop r7
 	pop r6
