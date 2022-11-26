@@ -182,14 +182,13 @@ Msgn1: string "Escolha um modo para jogar"
 Msgn2: string "1 - Termo"
 Msgn3: string "2 - Dueto"
 Msgn4: string "3 - Quarteto"
-Msgn5: string "                          "
-Msgn6: string "T E R M O"
-Msgn7: string "D U E T O"
-Msgn8: string "Q U A R T E T O"
-Msgn9: string "_____"
-Msgn10: string "You Win!"
-Msgn11: string "Game Over!"
-Msgn12: string "Deseja jogar Novamente? (S/n)"
+Msgn5: string "T E R M O"
+Msgn6: string "D U E T O"
+Msgn7: string "Q U A R T E T O"
+Msgn8: string "_____"
+Msgn9: string "You Win!"
+Msgn10: string "Game Over!"
+Msgn11: string "Deseja jogar Novamente? (S/n)"
 ;----------Inicio Programa Principal----------
 main:
 
@@ -673,29 +672,49 @@ Tela_Final:
 	push fr
 	push r0
 	push r1
+	push r2
 
 	Call ApagaTela
 
 	loadn r0, #0   				;carrega zero para o r0 para comparar com o conteúdo da variável "iterador"
-	load r7, iterador 			;carrega para r7 o conteúdo da variável
-	cmp r0, r7 	   				;verifica se as tentativas se esgotaram - indicativo de que o jogador perdeu
+	loadn r1, #215 ;carrega a posição na qual deve se iniciar a impressão
+	load r2, iterador 			;carrega para r2 o conteúdo da variável
+	cmp r0, r2 	   				;verifica se as tentativas se esgotaram - indicativo de que o jogador perdeu
 	jeq Tela_Final_Game_Over	;em caso afirmativo, seta  a mensagem "Game over"
 	jne Tela_Final_You_Win 		;caso contrário, seta  amensagem "You Win"
 
 	Tela_Final_Game_Over:
 
-		loadn r1, #215 ;carrega a posição na qual deve se iniciar a impressão
-		loadn r0, #Msgn11 ;carrega a mensagem a ser impressa
+		loadn r0, #Msgn10 ;carrega a mensagem a ser impressa
 		jmp Tela_Final_Fim
 
 	Tela_Final_You_Win:
 
-		loadn r1, #216 ;carrega a posição na qual deve se iniciar a impressão
-		loadn r0, #Msgn10 ;carrega a mensagem a ser impressa
+		loadn r0, #Msgn9 ;carrega a mensagem a ser impressa
 
 	Tela_Final_Fim:
 
 		Call ImprimePalavra ;impreme a mensagem
+
+	pop r2
+	pop r1
+	pop r0
+	pop fr
+
+	rts
+
+Tela_Final:
+
+	push fr
+	push r0
+	push r1
+
+	Call ApagaTela
+
+	loadn r1, #215 ;carrega a posição na qual deve se iniciar a impressão
+	loadn r0, #Msgn10 ;carrega a mensagem a ser impressa
+
+	Call ImprimePalavra ;impreme a mensagem
 
 	pop r1
 	pop r0
@@ -718,14 +737,14 @@ DesenhaTelaTermo:
 	push r4
 	
 	Call ApagaTela
-	loadn r0, #Msgn6 ;carrega para r0 o endereço no qual começa a sexta mensagem ("TERMO")
+	loadn r0, #Msgn5 ;carrega para r0 o endereço no qual começa a sexta mensagem ("TERMO")
 	loadn r1, #54 ; carrega a posição na qual deve se iniciar a impressão
 	Call ImprimePalavra ;imprime a mensagem 
 
 	loadn r3, #80 ;fator para pular 2 linhas
 	loadn r4, #6  ;número de tentativas
 	loadn r1, #376 ; carrega a posição na qual deve se iniciar a impressão
-	loadn r0, #Msgn9 ;carrega para r0 o endereço no qual começa a sexta mensagem ("____")
+	loadn r0, #Msgn8 ;carrega para r0 o endereço no qual começa a sexta mensagem ("____")
 	
 	DesenhaTelaTermo_Loop:
 
@@ -1052,7 +1071,7 @@ DesenhaTelaDueto:
 	push r6
 	
 	Call ApagaTela
-	loadn r0, #Msgn7 ;carrega para r0 o endereço no qual começa a sexta mensagem ("DUETO")
+	loadn r0, #Msgn6 ;carrega para r0 o endereço no qual começa a sexta mensagem ("DUETO")
 	loadn r1, #54 ; carrega a posição na qual deve se iniciar a impressão
 	Call ImprimePalavra ;imprime a mensagem 
 
@@ -1061,7 +1080,7 @@ DesenhaTelaDueto:
 	loadn r5, #15 ;espaço entre as palavras impressas somado ao tamanho das mensagens
 	loadn r6, #40 ;fator para pular uma linha entre as impressões
 	loadn r1, #359 ; carrega a posição na qual deve se iniciar a impressão
-	loadn r0, #Msgn9 ;carrega para r0 o endereço no qual começa a sexta mensagem ("____")
+	loadn r0, #Msgn8 ;carrega para r0 o endereço no qual começa a sexta mensagem ("____")
 	
 	DesenhaTelaDueto_Loop:
 
@@ -1240,7 +1259,7 @@ DesenhaTelaQuarteto:
 	push r6
 	
 	Call ApagaTela
-	loadn r0, #Msgn8 ;carrega para r0 o endereço no qual começa a sexta mensagem ("DUETO")
+	loadn r0, #Msgn7 ;carrega para r0 o endereço no qual começa a sexta mensagem ("DUETO")
 	loadn r1, #54 ; carrega a posição na qual deve se iniciar a impressão
 	Call ImprimePalavra ;imprime a mensagem 
 
@@ -1249,7 +1268,7 @@ DesenhaTelaQuarteto:
 	loadn r5, #9 ;espaço entre as palavras impressas
 	loadn r6, #40 ;fator para pular uma linha entre as impressões
 	loadn r1, #359 ; carrega a posição na qual deve se iniciar a impressão
-	loadn r0, #Msgn9 ;carrega para r0 o endereço no qual começa a sexta mensagem ("____")
+	loadn r0, #Msgn8 ;carrega para r0 o endereço no qual começa a sexta mensagem ("____")
 	
 	DesenhaTelaQuarteto_Loop:
 
