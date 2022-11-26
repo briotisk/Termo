@@ -702,25 +702,7 @@ Tela_Final:
 	pop fr
 
 	rts
-
-Tela_Final:
-
-	push fr
-	push r0
-	push r1
-
-	Call ApagaTela
-
-	loadn r1, #215 ;carrega a posição na qual deve se iniciar a impressão
-	loadn r0, #Msgn10 ;carrega a mensagem a ser impressa
-
-	Call ImprimePalavra ;impreme a mensagem
-
-	pop r1
-	pop r0
-	pop fr
-
-	rts
+;---------------------------------------------------
 
 ;---------------------------------------------------
 ; 			 	 Desenha Tela Termo 		  		|
