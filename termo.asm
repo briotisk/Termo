@@ -51,7 +51,7 @@
 ;================================================
 ;DesenhaTelaTermo:
 ;
-; Call ApagaTelaInicial
+; Call ApagaTela
 ; ImprimePalavra("TERMO")
 ; Call ImprimePalavra("_____")(x1)(x6)
 ;
@@ -73,7 +73,7 @@
 ;================================================
 ;DesenhaTelaDueto:
 ;
-; Call ApagaTelaInicial
+; Call ApagaTela
 ; ImprimePalavra("DUETO")
 ; Call ImprimePalavra("_____")(x2)(x7)
 ;
@@ -95,17 +95,17 @@
 ;================================================
 ;DesenhaTelaQuarteto:
 ;
-; Call ApagaTelaInicial
+; Call ApagaTela
 ; ImprimePalavra("QUARTETO")
 ; Call ImprimePalavra("_____")(x4)(x9)
 ;
 ;/DesenhaTelaQuarteto
 ;================================================
-;ApagaTelaInicial:
+;ApagaTela:
 ;
-; [coloca caracteres em branco sobre o que foi escrito na tela inicial]
+; [imprime espaços sobre toda a tela]
 ;
-;/ApagaTelaInicial
+;/ApagaTela
 ;================================================
 ;InputPalavra:
 ;
@@ -161,8 +161,10 @@ string "vital"
 ;[OBSERVAÇÃO: Ao acrescentar palavras, mudar o valor de r4 na subrotina "SortearPalavra"]
 
 ;---------Declaração das variáveis globais---------
+Iterador: var #1  	;armazena o conteúdo do iterador após o fim do jogo para verificar se o jogador ganhou ou não
 Letra: var #1  		;armazena uma letra
 Modo: var #1 		;armazena o modo de jogo (1 - Termo, 2 - Dueto ou 3 - Quarteto)
+Cor: var #1 		;armazena a cor usada para indicar os acertos
 Palavra: var #6 	;armazena a palavra digitada
 PalavraCmp: var #6 	;armazena uma cópia da palavra sorteada para a comparação
 PalavraCp: var #6 	;armazena uma cópia da palavra digitada para a comparação
@@ -181,12 +183,14 @@ Msgn1: string "Escolha um modo para jogar"
 Msgn2: string "1 - Termo"
 Msgn3: string "2 - Dueto"
 Msgn4: string "3 - Quarteto"
-Msgn5: string "                          "
-Msgn6: string "T E R M O"
-Msgn7: string "D U E T O"
-Msgn8: string "Q U A R T E T O"
-Msgn9: string "_____"
-Msgn10: string "Parabens!!"
+Msgn5: string "T E R M O"
+Msgn6: string "D U E T O"
+Msgn7: string "Q U A R T E T O"
+Msgn8: string "_____"
+Msgn9: string "You Win!"
+Msgn10: string "Game Over!"
+Msgn11: string "Deseja jogar Novamente? (s/n)"
+Msgn12: string "Ativar modo daltonico? (s/n)"
 ;----------Inicio Programa Principal----------
 main:
 
@@ -196,6 +200,8 @@ main:
 	store Acertos2, r0
 	store Acertos3, r0
 	store Acertos4, r0
+
+	Call ModoDaltonico
 
 	Call DesenhaTelaInicial	;imprime as mensagens inicais na tela
 	Call InputModo		    ;recebe o modo de jogo e desencadeia a geração de um número pseudo aleatório
@@ -218,6 +224,20 @@ main:
 	cmp r1, r0				;compara o conteúdo dos registradores
 	ceq Quarteto			;chama a subrotina "Quarteto" caso "Letra" corresponda a '3'
 
+	Call Tela_Final
+
+	loadn r1, #445  	;carrega a posição na qual deve se iniciar a impressão
+	loadn r0, #Msgn11 	;carrega a mensagem a ser impressa
+	Call ImprimePalavra ;imprime a mensagem
+
+	Call InputLetra 	;lê a resposta do jogador (s/n)
+
+	load r0, Letra 		;carrega para o registrador a letra digitada pelo usuário
+	loadn r1, #'s' 		;salva em r1 o caractere 'S'
+	cmp r0, r1			;verifica se o usuário digitou 's'
+	jeq main 			;recomeça o jogo em caso afirmativo
+	Call ApagaTela 		;caso o jogador digite 'n' apenas apaga a tela e apusa a execução
+
 	halt
 
 ;------------Fim Programa Principal-----------
@@ -234,6 +254,8 @@ DesenhaTelaInicial:
 	push r0
 	push r1
 	push r2
+
+	Call ApagaTela ;garante que a tela estará apagada 
 
 	loadn r0, #Msgn1 ;carrega para r0 o endereço no qual começa a primeira mensagem
 	loadn r1, #46 ; carrega a posição na qual deve se iniciar a impressão
@@ -264,23 +286,22 @@ DesenhaTelaInicial:
 ;-----------------------------------------
 ; Descrição: Apaga o menu inicial do jogo |
 ;-----------------------------------------	
-ApagaTelaInicial:
+ApagaTela:
 	
 
 	push fr
 	push r0
 	push r1
 
-	loadn r0, #Msgn5 ;carrega para r0 o endereço da mensagem "     " que será usada para sobrescrever e apagar as mensagens escritas
-	loadn r1, #46 ; carrega a posição onde se inica a primeira mensagen a ser apagada
-	Call ImprimePalavra ;apaga Mensagem 1
-	loadn r1, #175 ; carrega a posição onde se inica a segunda mensagen a ser apagada
-	Call ImprimePalavra ;apaga Mensagem 2
-	loadn r1, #255 ; carrega a posição onde se inica a terceira mensagen a ser apagada
-	Call ImprimePalavra ;apaga Mensagem 3
-	loadn r1, #335 ; carrega a posição onde se inica a quarta mensagen a ser apagada
-	Call ImprimePalavra ;apaga Mensagem 4
-	
+	loadn r0, #' ' 
+	loadn r1, #1199
+
+	ApagaTela_Loop:
+
+		outchar r0, r1
+		dec r1
+		jnz ApagaTela_Loop
+
 	pop r1
 	pop r0
 	pop fr
@@ -541,6 +562,46 @@ ImprimeLetraDueto:
 	rts
 ;-----------------------------------------------
 
+ModoDaltonico:
+
+	push fr
+	push r0
+	push r1
+	push r2
+
+	Call ApagaTela 		;caso o jogador digite 'n' apenas apaga a tela e apusa a execução
+	loadn r1, #445  	;carrega a posição na qual deve se iniciar a impressão
+	loadn r0, #Msgn12 	;carrega a mensagem a ser impressa
+	Call ImprimePalavra ;imprime a mensagem
+
+	Call InputLetra 	;lê a resposta do jogador (s/n)
+
+	load r0, Letra 		;carrega para o registrador a letra digitada pelo usuário
+	loadn r1, #'s' 		;salva em r1 o caractere 'S'
+	cmp r0, r1			;verifica se o usuário digitou 's'
+	jeq ModoDaltonico_Azul 
+	jne ModoDaltonico_Verde
+
+	ModoDaltonico_Azul:
+
+		loadn r0, #3072 ;carrega o código da cor azul
+		store Cor, r0 	;salva na variável o código da cor
+		jmp ModoDaltonico_Fim
+
+	ModoDaltonico_Verde:
+
+		loadn r0, #512 ;carrega o código da cor verde
+		store Cor, r0 	;salva na variável o código da cor
+
+	ModoDaltonico_Fim:
+
+	pop r2
+	pop r1
+	pop r0
+	pop fr
+
+	rts
+
 ;-----------------------------------------------
 ; 			  Imprime Letra Quarteto			| 
 ;-----------------------------------------------
@@ -649,6 +710,8 @@ Termo:
 
 	Termo_Fim:
 
+		store Iterador, r7 	;salva na variável r7 a quantidade de tentativas restantes
+
 	pop r7
 	pop r6
 	pop r5
@@ -661,6 +724,42 @@ Termo:
 
 	rts
 ;-----------------------------------------------
+
+Tela_Final:
+
+	push fr
+	push r0
+	push r1
+	push r2
+
+	Call ApagaTela
+
+	loadn r0, #0   				;carrega zero para o r0 para comparar com o conteúdo da variável "Iterador"
+	loadn r1, #215 ;carrega a posição na qual deve se iniciar a impressão
+	load r2, Iterador 			;carrega para r2 o conteúdo da variável
+	cmp r0, r2 	   				;verifica se as tentativas se esgotaram - indicativo de que o jogador perdeu
+	jeq Tela_Final_Game_Over	;em caso afirmativo, seta  a mensagem "Game over"
+	jne Tela_Final_You_Win 		;caso contrário, seta  amensagem "You Win"
+
+	Tela_Final_Game_Over:
+
+		loadn r0, #Msgn10 ;carrega a mensagem a ser impressa
+		jmp Tela_Final_Fim
+
+	Tela_Final_You_Win:
+
+		loadn r0, #Msgn9 ;carrega a mensagem a ser impressa
+
+	Tela_Final_Fim:
+
+		Call ImprimePalavra ;impreme a mensagem
+
+	pop r2
+	pop r1
+	pop r0
+	pop fr
+
+	rts
 
 ;---------------------------------------------------
 ; 			 	 Desenha Tela Termo 		  		|
@@ -676,15 +775,15 @@ DesenhaTelaTermo:
 	push r3
 	push r4
 	
-	Call ApagaTelaInicial
-	loadn r0, #Msgn6 ;carrega para r0 o endereço no qual começa a sexta mensagem ("TERMO")
+	Call ApagaTela
+	loadn r0, #Msgn5 ;carrega para r0 o endereço no qual começa a sexta mensagem ("TERMO")
 	loadn r1, #54 ; carrega a posição na qual deve se iniciar a impressão
 	Call ImprimePalavra ;imprime a mensagem 
 
 	loadn r3, #80 ;fator para pular 2 linhas
 	loadn r4, #6  ;número de tentativas
 	loadn r1, #376 ; carrega a posição na qual deve se iniciar a impressão
-	loadn r0, #Msgn9 ;carrega para r0 o endereço no qual começa a sexta mensagem ("____")
+	loadn r0, #Msgn8 ;carrega para r0 o endereço no qual começa a sexta mensagem ("____")
 	
 	DesenhaTelaTermo_Loop:
 
@@ -878,7 +977,7 @@ SetaCorLetra:
 
 	cmp r4, r5
 	jne SetaCorLetra_Amarelo
-	loadn r0, #3072 ;troquei temporariamente o verde por azul#512 	;código da cor verde
+	load r0, Cor 	;carrega a cor usada para indicar o acerto
 	inc r7 			;incrementa o número de acertos	
 	jmp SetaCorLetra_Fim
 
@@ -979,6 +1078,8 @@ Dueto:
 
 	Dueto_Fim:
 
+		store Iterador, r7 	;salva na variável r7 a quantidade de tentativas restantes
+
 	pop r7
 	pop r6
 	pop r5
@@ -1008,8 +1109,8 @@ DesenhaTelaDueto:
 	push r5
 	push r6
 	
-	Call ApagaTelaInicial
-	loadn r0, #Msgn7 ;carrega para r0 o endereço no qual começa a sexta mensagem ("DUETO")
+	Call ApagaTela
+	loadn r0, #Msgn6 ;carrega para r0 o endereço no qual começa a sexta mensagem ("DUETO")
 	loadn r1, #54 ; carrega a posição na qual deve se iniciar a impressão
 	Call ImprimePalavra ;imprime a mensagem 
 
@@ -1018,7 +1119,7 @@ DesenhaTelaDueto:
 	loadn r5, #15 ;espaço entre as palavras impressas somado ao tamanho das mensagens
 	loadn r6, #40 ;fator para pular uma linha entre as impressões
 	loadn r1, #359 ; carrega a posição na qual deve se iniciar a impressão
-	loadn r0, #Msgn9 ;carrega para r0 o endereço no qual começa a sexta mensagem ("____")
+	loadn r0, #Msgn8 ;carrega para r0 o endereço no qual começa a sexta mensagem ("____")
 	
 	DesenhaTelaDueto_Loop:
 
@@ -1164,6 +1265,8 @@ Quarteto:
 
 	Quarteto_Fim:
 
+		store Iterador, r7 	;salva na variável r7 a quantidade de tentativas restantes
+
 	pop r7
 	pop r6
 	pop r5
@@ -1194,8 +1297,8 @@ DesenhaTelaQuarteto:
 	push r5
 	push r6
 	
-	Call ApagaTelaInicial
-	loadn r0, #Msgn8 ;carrega para r0 o endereço no qual começa a sexta mensagem ("DUETO")
+	Call ApagaTela
+	loadn r0, #Msgn7 ;carrega para r0 o endereço no qual começa a sexta mensagem ("DUETO")
 	loadn r1, #54 ; carrega a posição na qual deve se iniciar a impressão
 	Call ImprimePalavra ;imprime a mensagem 
 
@@ -1204,7 +1307,7 @@ DesenhaTelaQuarteto:
 	loadn r5, #9 ;espaço entre as palavras impressas
 	loadn r6, #40 ;fator para pular uma linha entre as impressões
 	loadn r1, #359 ; carrega a posição na qual deve se iniciar a impressão
-	loadn r0, #Msgn9 ;carrega para r0 o endereço no qual começa a sexta mensagem ("____")
+	loadn r0, #Msgn8 ;carrega para r0 o endereço no qual começa a sexta mensagem ("____")
 	
 	DesenhaTelaQuarteto_Loop:
 
