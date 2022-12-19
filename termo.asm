@@ -1,5 +1,11 @@
 ;----Termo----
 
+;Arthur Breno dos Reis Paula
+;Caio Oliveira Godinho
+;Daniel Contente Romanzini
+;Felipe Cecato
+;Gabriel Henrique Brioto
+
 ; <Estrutura do jogo>
 ;
 ;main:
@@ -158,6 +164,57 @@ string "carta"
 string "ferro"
 string "perto"
 string "vital"
+string "feito"
+string "beijo" 
+string "curto" 
+string "exato" 
+string "preto" 
+string "julho" 
+string "marco" 
+string "verbo"  
+string "junto" 
+string "clube" 
+string "hotel" 
+string "louco" 
+string "forte" 
+string "muito" 
+string "pouco" 
+string "certo" 
+string "quina"
+string "quota" 
+string "louro" 
+string "couro" 
+string "bromo" 
+string "trave" 
+string "cravo" 
+string "bravo" 
+string "bolha" 
+string "falha" 
+string "justo" 
+string "pizza" 
+string "morte" 
+string "volta" 
+string "unido" 
+string "galho" 
+string "filho" 
+string "bomba" 
+string "gesto" 
+string "grilo" 
+string "amido" 
+string "amigo"
+string "resto" 
+string "choro"  
+string "longe" 
+string "banho" 
+string "couve" 
+string "chato" 
+string "legal" 
+string "touca" 
+string "olhar" 
+string "canil" 
+string "cesta" 
+string "ostra" 
+
 ;[OBSERVAÇÃO: Ao acrescentar palavras, mudar o valor de r4 na subrotina "SortearPalavra"]
 
 ;---------Declaração das variáveis globais---------
@@ -191,6 +248,13 @@ Msgn9: string "You Win!"
 Msgn10: string "Game Over!"
 Msgn11: string "Deseja jogar Novamente? (s/n)"
 Msgn12: string "Ativar modo daltonico? (s/n)"
+Msgn13: string "INSTRUCOES:"
+Msgn14: string "Voce tera algumas tentativas para       acertar as palavras"
+Msgn15: string "As dicas serao:"
+Msgn16: string "Letra e posicao corretas:"
+Msgn17: string "Letra correta e posicao errada:"
+Msgn18: string "Letra nao existente na palavra:"
+Msgn19: string "DIGITE QUALQUER TECLA PARA CONTINUAR!"
 ;----------Inicio Programa Principal----------
 main:
 
@@ -205,7 +269,7 @@ main:
 	store Cor, r0 	;salva na variável o código da cor
 
 	Call ModoDaltonico
-
+	Call DesenhaTelaInstrucao		;imprime a tela de instrucoes
 	Call DesenhaTelaInicial	;imprime as mensagens inicais na tela
 	Call InputModo		    ;recebe o modo de jogo e desencadeia a geração de um número pseudo aleatório
 
@@ -275,6 +339,74 @@ DesenhaTelaInicial:
 	loadn r0, #Msgn4 ;carrega para r0 o endereço no qual começa a primeira mensagem
 	loadn r1, #335 ; carrega a posição na qual deve se iniciar a impressão
 	Call ImprimePalavra ;imprime Mensagem 4
+	
+	pop r2
+	pop r1
+	pop r0
+	pop fr
+
+	rts
+;--------------------------------------------
+
+;-------------------------------------------
+; 			Desenha Tela de Instrucoes  	|
+;--------------------------------------------
+; Descrição: Desenha tela de como jogar     |
+;-------------------------------------------											
+DesenhaTelaInstrucao:
+
+	push fr
+	push r0
+	push r1
+	push r2
+
+	Call ApagaTela ;garante que a tela estará apagada 
+
+	loadn r0, #Msgn13 ;carrega para r0 o endereço no qual começa a primeira mensagem
+	loadn r1, #80 ; carrega a posição na qual deve se iniciar a impressão
+	Call ImprimePalavra ;imprime Mensagem 1
+
+	loadn r0, #Msgn14 ;carrega para r0 o endereço no qual começa a primeira mensagem
+	loadn r1, #202 ; carrega a posição na qual deve se iniciar a impressão
+	Call ImprimePalavra ;imprime Mensagem 2
+
+	loadn r0, #Msgn15 ;carrega para r0 o endereço no qual começa a primeira mensagem
+	loadn r1, #372 ; carrega a posição na qual deve se iniciar a impressão
+	Call ImprimePalavra ;imprime Mensagem 3
+
+	loadn r0, #Msgn16 ;carrega para r0 o endereço no qual começa a primeira mensagem
+	loadn r1, #482 ; carrega a posição na qual deve se iniciar a impressão
+	Call ImprimePalavra ;imprime Mensagem 4
+	
+	loadn r0, #515
+	load r1, Cor
+	loadn r2, #'x'
+	add r2, r2, r1
+	Call ImprimeLetraTermo
+	
+	loadn r0, #Msgn17 ;carrega para r0 o endereço no qual começa a primeira mensagem
+	loadn r1, #522 ; carrega a posição na qual deve se iniciar a impressão
+	Call ImprimePalavra ;imprime Mensagem 4
+	
+	loadn r0, #555
+	loadn r2, #'x'
+	loadn r1, #2816
+	add r2, r2, r1
+	Call ImprimeLetraTermo
+	
+	loadn r0, #Msgn18 ;carrega para r0 o endereço no qual começa a primeira mensagem
+	loadn r1, #562 ; carrega a posição na qual deve se iniciar a impressão
+	Call ImprimePalavra ;imprime Mensagem 4
+	
+	loadn r0, #595
+	loadn r2, #'x'
+	Call ImprimeLetraTermo
+	
+	loadn r0, #Msgn19 ;carrega para r0 o endereço no qual começa a primeira mensagem
+	loadn r1, #762 ; carrega a posição na qual deve se iniciar a impressão
+	Call ImprimePalavra ;imprime Mensagem 4
+		
+	Call InputLetra
 	
 	pop r2
 	pop r1
@@ -1431,7 +1563,7 @@ SortearPalavra:
 
 	load r2, Modo 		;carrega para r2 o modo
 	load r3, NumAleat 	;carrega o número aleatório para r3
-	loadn r4, #10 	  	;carrega para r4 o número de palavras
+	loadn r4, #60 	  	;carrega para r4 o número de palavras
 	loadn r5, #Offset	;carrega o endereço da primeira palavra para r5
 
 	mod r0, r3, r4	  	;armazena em r0 o resto da divisão do número aleatório pela quantidade de palavras
