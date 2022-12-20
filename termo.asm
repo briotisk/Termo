@@ -235,7 +235,7 @@ Acertos2: var #1 	;armazena a quantidade de letras na posição certa na palavra
 Acertos3: var #1 	;armazena a quantidade de letras na posição certa na palavra 3 
 Acertos4: var #1 	;armazena a quantidade de letras na posição certa na palavra 4 
 
-;---------Mensagens usadas no program seguidas de ses respectivos comprimentos---------
+;---------Mensagens usadas no programa---------
 Msgn1: string "Escolha um modo para jogar"
 Msgn2: string "1 - Termo"
 Msgn3: string "2 - Dueto"
@@ -254,7 +254,8 @@ Msgn15: string "As dicas serao:"
 Msgn16: string "Letra e posicao corretas:"
 Msgn17: string "Letra correta e posicao errada:"
 Msgn18: string "Letra nao existente na palavra:"
-Msgn19: string "DIGITE QUALQUER TECLA PARA CONTINUAR!"
+Msgn19: string "(Use a tecla espaco para apagar)"
+Msgn20: string "DIGITE QUALQUER TECLA PARA CONTINUAR!"
 ;----------Inicio Programa Principal----------
 main:
 
@@ -364,19 +365,19 @@ DesenhaTelaInstrucao:
 
 	loadn r0, #Msgn13 ;carrega para r0 o endereço no qual começa a primeira mensagem
 	loadn r1, #80 ; carrega a posição na qual deve se iniciar a impressão
-	Call ImprimePalavra ;imprime Mensagem 1
+	Call ImprimePalavra ;imprime Mensagem 13
 
 	loadn r0, #Msgn14 ;carrega para r0 o endereço no qual começa a primeira mensagem
 	loadn r1, #202 ; carrega a posição na qual deve se iniciar a impressão
-	Call ImprimePalavra ;imprime Mensagem 2
+	Call ImprimePalavra ;imprime Mensagem 14
 
 	loadn r0, #Msgn15 ;carrega para r0 o endereço no qual começa a primeira mensagem
 	loadn r1, #372 ; carrega a posição na qual deve se iniciar a impressão
-	Call ImprimePalavra ;imprime Mensagem 3
+	Call ImprimePalavra ;imprime Mensagem 15
 
 	loadn r0, #Msgn16 ;carrega para r0 o endereço no qual começa a primeira mensagem
 	loadn r1, #482 ; carrega a posição na qual deve se iniciar a impressão
-	Call ImprimePalavra ;imprime Mensagem 4
+	Call ImprimePalavra ;imprime Mensagem 16
 	
 	loadn r0, #515
 	load r1, Cor
@@ -386,7 +387,7 @@ DesenhaTelaInstrucao:
 	
 	loadn r0, #Msgn17 ;carrega para r0 o endereço no qual começa a primeira mensagem
 	loadn r1, #522 ; carrega a posição na qual deve se iniciar a impressão
-	Call ImprimePalavra ;imprime Mensagem 4
+	Call ImprimePalavra ;imprime Mensagem 17
 	
 	loadn r0, #555
 	loadn r2, #'x'
@@ -396,13 +397,17 @@ DesenhaTelaInstrucao:
 	
 	loadn r0, #Msgn18 ;carrega para r0 o endereço no qual começa a primeira mensagem
 	loadn r1, #562 ; carrega a posição na qual deve se iniciar a impressão
-	Call ImprimePalavra ;imprime Mensagem 4
+	Call ImprimePalavra ;imprime Mensagem 18
 	
 	loadn r0, #595
 	loadn r2, #'x'
 	Call ImprimeLetraTermo
-	
+
 	loadn r0, #Msgn19 ;carrega para r0 o endereço no qual começa a primeira mensagem
+	loadn r1, #644 ; carrega a posição na qual deve se iniciar a impressão
+	Call ImprimePalavra ;imprime Mensagem 19
+	
+	loadn r0, #Msgn20 ;carrega para r0 o endereço no qual começa a primeira mensagem
 	loadn r1, #762 ; carrega a posição na qual deve se iniciar a impressão
 	Call ImprimePalavra ;imprime Mensagem 4
 		
