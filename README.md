@@ -1,5 +1,6 @@
 # Termo
-Repositório dedicado à criação do jogo Termo em linguagem Assembly
+### Repositório dedicado à criação do jogo Termo em linguagem Assembly
+Link para o vídeo contendo explicação do projeto: https://youtu.be/b_YtULh11EU
 
 > Planejamento do jogo:
 
