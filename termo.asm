@@ -292,7 +292,7 @@ main:
 	cmp r1, r0				;compara o conteúdo dos registradores
 	ceq Quarteto			;chama a subrotina "Quarteto" caso "Letra" corresponda a '3'
 
-	Call Tela_Final
+	Call Tela_Final		;faz impressão da mensagem de vitória ou derrota do jogador
 
 	loadn r1, #445  	;carrega a posição na qual deve se iniciar a impressão
 	loadn r0, #Msgn11 	;carrega a mensagem a ser impressa
